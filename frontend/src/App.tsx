@@ -11,12 +11,14 @@ import Reports from './pages/Reports/Reports';
 import Notifications from './pages/Notifications/Notifications';
 import Settings from './pages/Settings/Settings';
 import Login from './pages/Login';
+import Landing from './pages/Landing/Landing';
+import Register from './pages/Register/Register';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { role, token } = useAuth();
   if (!role || !token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/landing" replace />;
   }
   return <>{children}</>;
 }
@@ -26,6 +28,8 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/landing" element={<Landing />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
             <Route path="/" element={<Dashboard />} />

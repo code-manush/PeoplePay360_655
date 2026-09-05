@@ -51,6 +51,38 @@ def login(body: dict):
         "employee": employee,
         "expires_minutes": settings.JWT_EXPIRE_MINUTES,
     }, "Signed in")
+@router.post("/register")
+def register(body: dict):
+    email = (body.get("email") or "").strip()
+    password = body.get("password") or ""
+    first_name = body.get("first_name") or ""
+    last_name = body.get("last_name") or ""
+    
+    if not email or not password or not first_name or not last_name:
+        raise HTTPException(status_code=422, detail=error_response("VALIDATION_ERROR", "Email, password, first name and last name are required"))
+
+    try:
+        user = user_repo.create_login_account(email, password, "EMPLOYEE")
+        
+        # Also create a basic employee record for the user
+        emp_data = {
+            "user_id": user["id"],
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "employee_code": emp_repo.next_employee_code(),
+            "status": "ACTIVE",
+            "employment_type": "FULL_TIME",
+            "joining_date": datetime.now(timezone.utc).date()
+        }
+        employee = emp_repo.create(emp_data)
+        
+        return success_response({
+            "user": user,
+            "employee": employee
+        }, "Registered successfully")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=error_response("REGISTRATION_ERROR", str(e)))
 
 
 @router.get("/me")
