@@ -2,6 +2,14 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8000/api/v1';
 
+let authToken = localStorage.getItem('peoplepay_token');
+
+export function setAuthToken(token: string | null) {
+  authToken = token;
+  if (token) localStorage.setItem('peoplepay_token', token);
+  else localStorage.removeItem('peoplepay_token');
+}
+
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -10,7 +18,7 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('peoplepay_token');
+  const token = authToken || localStorage.getItem('peoplepay_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -33,7 +41,7 @@ apiClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('peoplepay_token');
+      setAuthToken(null);
       localStorage.removeItem('peoplepay_role');
       localStorage.removeItem('peoplepay_user');
       localStorage.removeItem('peoplepay_employee');

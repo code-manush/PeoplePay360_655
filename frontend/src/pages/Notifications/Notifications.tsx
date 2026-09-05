@@ -58,7 +58,12 @@ export default function Notifications() {
       setForm({ title: '', message: '', target_type: 'ALL', target_id: '', priority: 'NORMAL' });
       load();
     } catch (err: any) {
-      setError(err.message);
+      const msg = String(err.message || '');
+      if (msg.toLowerCase().includes('role')) {
+        setError('This account cannot send notifications. Sign out and sign in as Admin or HR.');
+      } else {
+        setError(err.message);
+      }
     }
   }
 

@@ -35,6 +35,7 @@ def get_notification(notif_id: str, current: dict = Depends(get_current_user)):
 
 
 @router.post("")
+@router.post("/")
 def create_notification(body: dict, current: dict = Depends(require_min_role("HR"))):
     if not body.get("title") or not (body.get("message") or body.get("body")):
         raise HTTPException(status_code=422, detail=error_response("VALIDATION_ERROR", "title and message are required"))

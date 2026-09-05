@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import apiClient, { unwrapData } from '../api/client';
+import apiClient, { unwrapData, setAuthToken } from '../api/client';
 
 export type Role = 'ADMIN' | 'HR' | 'EMPLOYEE';
 
@@ -42,8 +42,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   useEffect(() => {
-    if (token) localStorage.setItem('peoplepay_token', token);
-    else localStorage.removeItem('peoplepay_token');
+    if (token) setAuthToken(token);
+    else setAuthToken(null);
     if (role) localStorage.setItem('peoplepay_role', role);
     else localStorage.removeItem('peoplepay_role');
     if (user) localStorage.setItem('peoplepay_user', JSON.stringify(user));
@@ -65,6 +65,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     const response = await apiClient.post('/auth/login', { email, password });
     const data = unwrapData<any>(response);
+    setAuthToken(data.token);
+    if (data.role) localStorage.setItem('peoplepay_role', data.role);
     setToken(data.token);
     setRole(data.role);
     setUser(data.user);
@@ -72,6 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
+    setAuthToken(null);
     setToken(null);
     setRole(null);
     setUser(null);
