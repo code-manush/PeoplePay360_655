@@ -1,0 +1,8 @@
+[
+  {"id": "toff-001", "name": "Annual Leave", "code": "ANNUAL", "description": "Paid annual leave for rest and recreation", "is_paid": true, "requires_allocation": true, "max_days_per_year": 24, "carry_forward": true, "max_carry_forward": 10, "is_active": true},
+  {"id": "toff-002", "name": "Sick Leave", "code": "SICK", "description": "Paid leave for illness and medical appointments", "is_paid": true, "requires_allocation": true, "max_days_per_year": 12, "carry_forward": false, "max_carry_forward": 0, "is_active": true},
+  {"id": "toff-003", "name": "Casual Leave", "code": "CASUAL", "description": "Paid casual leave for personal matters", "is_paid": true, "requires_allocation": true, "max_days_per_year": 8, "carry_forward": false, "max_carry_forward": 0, "is_active": true},
+  {"id": "toff-004", "name": "Maternity Leave", "code": "MATERNITY", "description": "Paid maternity leave as per statute", "is_paid": true, "requires_allocation": false, "max_days_per_year": 182, "carry_forward": false, "max_carry_forward": 0, "is_active": true},
+  {"id": "toff-005", "name": "Leave Without Pay", "code": "LWP", "description": "Unpaid leave for extended personal needs", "is_paid": false, "requires_allocation": false, "max_days_per_year": 30, "carry_forward": false, "max_carry_forward": 0, "is_active": true},
+  {"id": "toff-006", "name": "Compensatory Off", "code": "COMP_OFF", "description": "Compensatory off for working on holidays/weekends", "is_paid": true, "requires_allocation": true, "max_days_per_year": 12, "carry_forward": false, "max_carry_forward": 0, "is_active": true}
+]

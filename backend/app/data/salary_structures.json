@@ -1,0 +1,6 @@
+[
+  {"id": "ss-001", "name": "Regular Employee Salary", "code": "REGULAR_SALARY", "description": "Standard salary structure for full-time employees with basic, HRA, transport, and statutory deductions", "is_active": true, "created_at": "2023-01-01T00:00:00Z"},
+  {"id": "ss-002", "name": "Contract Employee Salary", "code": "CONTRACT_SALARY", "description": "Simplified salary structure for contract employees", "is_active": true, "created_at": "2023-01-01T00:00:00Z"},
+  {"id": "ss-003", "name": "Intern Stipend", "code": "INTERN_STIPEND", "description": "Monthly stipend structure for interns", "is_active": true, "created_at": "2023-06-01T00:00:00Z"},
+  {"id": "ss-004", "name": "Part-Time Salary", "code": "PARTTIME_SALARY", "description": "Pro-rated salary structure for part-time employees", "is_active": true, "created_at": "2023-01-01T00:00:00Z"}
+]

@@ -1,0 +1,22 @@
+[
+  {"id": "alloc-001", "employee_id": "emp-001", "time_off_type_id": "toff-001", "year": 2024, "allocated_units": 24.0, "used_units": 5.0, "remaining_units": 19.0, "unit_type": "DAYS"},
+  {"id": "alloc-002", "employee_id": "emp-001", "time_off_type_id": "toff-002", "year": 2024, "allocated_units": 12.0, "used_units": 2.0, "remaining_units": 10.0, "unit_type": "DAYS"},
+  {"id": "alloc-003", "employee_id": "emp-001", "time_off_type_id": "toff-003", "year": 2024, "allocated_units": 8.0, "used_units": 1.0, "remaining_units": 7.0, "unit_type": "DAYS"},
+  {"id": "alloc-004", "employee_id": "emp-002", "time_off_type_id": "toff-001", "year": 2024, "allocated_units": 20.0, "used_units": 8.0, "remaining_units": 12.0, "unit_type": "DAYS"},
+  {"id": "alloc-005", "employee_id": "emp-002", "time_off_type_id": "toff-002", "year": 2024, "allocated_units": 12.0, "used_units": 4.0, "remaining_units": 8.0, "unit_type": "DAYS"},
+  {"id": "alloc-006", "employee_id": "emp-002", "time_off_type_id": "toff-003", "year": 2024, "allocated_units": 8.0, "used_units": 2.0, "remaining_units": 6.0, "unit_type": "DAYS"},
+  {"id": "alloc-007", "employee_id": "emp-003", "time_off_type_id": "toff-001", "year": 2024, "allocated_units": 20.0, "used_units": 3.0, "remaining_units": 17.0, "unit_type": "DAYS"},
+  {"id": "alloc-008", "employee_id": "emp-003", "time_off_type_id": "toff-002", "year": 2024, "allocated_units": 12.0, "used_units": 1.0, "remaining_units": 11.0, "unit_type": "DAYS"},
+  {"id": "alloc-009", "employee_id": "emp-004", "time_off_type_id": "toff-001", "year": 2024, "allocated_units": 22.0, "used_units": 6.0, "remaining_units": 16.0, "unit_type": "DAYS"},
+  {"id": "alloc-010", "employee_id": "emp-004", "time_off_type_id": "toff-002", "year": 2024, "allocated_units": 12.0, "used_units": 3.0, "remaining_units": 9.0, "unit_type": "DAYS"},
+  {"id": "alloc-011", "employee_id": "emp-006", "time_off_type_id": "toff-001", "year": 2024, "allocated_units": 24.0, "used_units": 10.0, "remaining_units": 14.0, "unit_type": "DAYS"},
+  {"id": "alloc-012", "employee_id": "emp-006", "time_off_type_id": "toff-002", "year": 2024, "allocated_units": 12.0, "used_units": 0.0, "remaining_units": 12.0, "unit_type": "DAYS"},
+  {"id": "alloc-013", "employee_id": "emp-009", "time_off_type_id": "toff-001", "year": 2024, "allocated_units": 24.0, "used_units": 7.0, "remaining_units": 17.0, "unit_type": "DAYS"},
+  {"id": "alloc-014", "employee_id": "emp-009", "time_off_type_id": "toff-002", "year": 2024, "allocated_units": 12.0, "used_units": 5.0, "remaining_units": 7.0, "unit_type": "DAYS"},
+  {"id": "alloc-015", "employee_id": "emp-010", "time_off_type_id": "toff-001", "year": 2024, "allocated_units": 20.0, "used_units": 4.0, "remaining_units": 16.0, "unit_type": "DAYS"},
+  {"id": "alloc-016", "employee_id": "emp-010", "time_off_type_id": "toff-002", "year": 2024, "allocated_units": 12.0, "used_units": 2.0, "remaining_units": 10.0, "unit_type": "DAYS"},
+  {"id": "alloc-017", "employee_id": "emp-012", "time_off_type_id": "toff-001", "year": 2024, "allocated_units": 22.0, "used_units": 9.0, "remaining_units": 13.0, "unit_type": "DAYS"},
+  {"id": "alloc-018", "employee_id": "emp-012", "time_off_type_id": "toff-002", "year": 2024, "allocated_units": 12.0, "used_units": 1.0, "remaining_units": 11.0, "unit_type": "DAYS"},
+  {"id": "alloc-019", "employee_id": "emp-015", "time_off_type_id": "toff-001", "year": 2024, "allocated_units": 24.0, "used_units": 12.0, "remaining_units": 12.0, "unit_type": "DAYS"},
+  {"id": "alloc-020", "employee_id": "emp-015", "time_off_type_id": "toff-002", "year": 2024, "allocated_units": 12.0, "used_units": 3.0, "remaining_units": 9.0, "unit_type": "DAYS"}
+]

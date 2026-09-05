@@ -1,0 +1,16 @@
+[
+  {"id": "pos-001", "title": "Senior Software Engineer", "code": "SSE", "department_id": "dept-001", "description": "Leads engineering initiatives, designs systems, mentors junior developers", "is_active": true},
+  {"id": "pos-002", "title": "Software Engineer", "code": "SE", "department_id": "dept-001", "description": "Develops and maintains software applications", "is_active": true},
+  {"id": "pos-003", "title": "Junior Software Engineer", "code": "JSE", "department_id": "dept-001", "description": "Entry-level software development role", "is_active": true},
+  {"id": "pos-004", "title": "DevOps Engineer", "code": "DEVOPS", "department_id": "dept-001", "description": "Manages CI/CD pipelines and infrastructure", "is_active": true},
+  {"id": "pos-005", "title": "QA Engineer", "code": "QA", "department_id": "dept-001", "description": "Ensures software quality through testing", "is_active": true},
+  {"id": "pos-006", "title": "HR Manager", "code": "HRM", "department_id": "dept-002", "description": "Manages HR operations, policies and people programs", "is_active": true},
+  {"id": "pos-007", "title": "HR Executive", "code": "HRE", "department_id": "dept-002", "description": "Handles recruitment, onboarding and employee relations", "is_active": true},
+  {"id": "pos-008", "title": "HR Intern", "code": "HRINT", "department_id": "dept-002", "description": "Supports HR operations as an intern", "is_active": true},
+  {"id": "pos-009", "title": "Finance Manager", "code": "FM", "department_id": "dept-003", "description": "Oversees financial operations, budgeting and reporting", "is_active": true},
+  {"id": "pos-010", "title": "Accountant", "code": "ACC", "department_id": "dept-003", "description": "Manages accounts, payroll processing and compliance", "is_active": true},
+  {"id": "pos-011", "title": "Sales Manager", "code": "SM", "department_id": "dept-004", "description": "Leads sales team, manages targets and client relationships", "is_active": true},
+  {"id": "pos-012", "title": "Business Development Executive", "code": "BDE", "department_id": "dept-004", "description": "Generates new business leads and partnerships", "is_active": true},
+  {"id": "pos-013", "title": "Operations Manager", "code": "OM", "department_id": "dept-005", "description": "Manages day-to-day operations and project delivery", "is_active": true},
+  {"id": "pos-014", "title": "Operations Executive", "code": "OE", "department_id": "dept-005", "description": "Coordinates operational processes and vendor management", "is_active": true}
+]

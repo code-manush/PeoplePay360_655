@@ -1,0 +1,17 @@
+[
+  {
+    "id": "sched-001", "name": "Standard 5-Day Week", "code": "STD5", "schedule_type": "FIXED",
+    "timezone": "Asia/Kolkata", "is_active": true,
+    "created_at": "2023-01-01T00:00:00Z"
+  },
+  {
+    "id": "sched-002", "name": "Flexible 5-Day Week", "code": "FLEX5", "schedule_type": "FLEXIBLE",
+    "timezone": "Asia/Kolkata", "is_active": true,
+    "created_at": "2023-01-01T00:00:00Z"
+  },
+  {
+    "id": "sched-003", "name": "Part-Time 3-Day Week", "code": "PT3", "schedule_type": "FIXED",
+    "timezone": "Asia/Kolkata", "is_active": true,
+    "created_at": "2023-01-01T00:00:00Z"
+  }
+]

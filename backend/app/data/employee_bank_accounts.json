@@ -1,0 +1,11 @@
+[
+  {"id": "bank-001", "employee_id": "emp-001", "bank_name": "HDFC Bank", "account_holder": "Arjun Sharma", "account_number": "50100234567821", "ifsc_code": "HDFC0001234", "account_type": "SAVINGS", "is_primary": true, "is_verified": true},
+  {"id": "bank-002", "employee_id": "emp-002", "bank_name": "ICICI Bank", "account_holder": "Priya Nair", "account_number": "00311234567820", "ifsc_code": "ICIC0001567", "account_type": "SAVINGS", "is_primary": true, "is_verified": true},
+  {"id": "bank-003", "employee_id": "emp-003", "bank_name": "SBI", "account_holder": "Rahul Verma", "account_number": "32456789012345", "ifsc_code": "SBIN0012345", "account_type": "SAVINGS", "is_primary": true, "is_verified": true},
+  {"id": "bank-004", "employee_id": "emp-004", "bank_name": "Axis Bank", "account_holder": "Kavya Reddy", "account_number": "91501234567890", "ifsc_code": "UTIB0001234", "account_type": "SAVINGS", "is_primary": true, "is_verified": true},
+  {"id": "bank-005", "employee_id": "emp-006", "bank_name": "Kotak Bank", "account_holder": "Sneha Patel", "account_number": "12345678901234", "ifsc_code": "KKBK0001234", "account_type": "SAVINGS", "is_primary": true, "is_verified": true},
+  {"id": "bank-006", "employee_id": "emp-009", "bank_name": "HDFC Bank", "account_holder": "Suresh Gupta", "account_number": "50200345678912", "ifsc_code": "HDFC0002345", "account_type": "SALARY", "is_primary": true, "is_verified": true},
+  {"id": "bank-007", "employee_id": "emp-010", "bank_name": "SBI", "account_holder": "Ananya Iyer", "account_number": "45678901234567", "ifsc_code": "SBIN0023456", "account_type": "SAVINGS", "is_primary": true, "is_verified": true},
+  {"id": "bank-008", "employee_id": "emp-012", "bank_name": "ICICI Bank", "account_holder": "Neha Joshi", "account_number": "00411234567891", "ifsc_code": "ICIC0002678", "account_type": "SAVINGS", "is_primary": true, "is_verified": true},
+  {"id": "bank-009", "employee_id": "emp-015", "bank_name": "HDFC Bank", "account_holder": "Sameer Khan", "account_number": "50300456789023", "ifsc_code": "HDFC0003456", "account_type": "SALARY", "is_primary": true, "is_verified": true}
+]

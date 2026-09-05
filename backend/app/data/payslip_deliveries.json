@@ -1,0 +1,7 @@
+[
+  {"id": "del-001", "payrun_id": "pr-001", "payslip_id": "ps-001", "employee_id": "emp-001", "delivery_method": "EMAIL", "status": "SENT", "sent_at": "2024-09-05T12:00:00Z", "failure_reason": null, "email_address": "arjun.sharma@peoplepay.in"},
+  {"id": "del-002", "payrun_id": "pr-001", "payslip_id": "ps-002", "employee_id": "emp-002", "delivery_method": "EMAIL", "status": "SENT", "sent_at": "2024-09-05T12:00:00Z", "failure_reason": null, "email_address": "priya.nair@peoplepay.in"},
+  {"id": "del-003", "payrun_id": "pr-001", "payslip_id": "ps-003", "employee_id": "emp-003", "delivery_method": "EMAIL", "status": "FAILED", "sent_at": null, "failure_reason": "Email delivery failed - invalid email", "email_address": "rahul.verma@peoplepay.in"},
+  {"id": "del-004", "payrun_id": "pr-001", "payslip_id": "ps-004", "employee_id": "emp-004", "delivery_method": "EMAIL", "status": "SENT", "sent_at": "2024-09-05T12:00:00Z", "failure_reason": null, "email_address": "kavya.reddy@peoplepay.in"},
+  {"id": "del-005", "payrun_id": "pr-001", "payslip_id": "ps-005", "employee_id": "emp-006", "delivery_method": "EMAIL", "status": "SENT", "sent_at": "2024-09-05T12:00:00Z", "failure_reason": null, "email_address": "sneha.patel@peoplepay.in"}
+]

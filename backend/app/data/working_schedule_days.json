@@ -1,0 +1,25 @@
+[
+  {"id": "sd-001", "schedule_id": "sched-001", "day_of_week": "MONDAY",    "is_working": true,  "start_time": "09:00", "end_time": "18:00", "break_minutes": 60, "expected_hours": 8.0},
+  {"id": "sd-002", "schedule_id": "sched-001", "day_of_week": "TUESDAY",   "is_working": true,  "start_time": "09:00", "end_time": "18:00", "break_minutes": 60, "expected_hours": 8.0},
+  {"id": "sd-003", "schedule_id": "sched-001", "day_of_week": "WEDNESDAY", "is_working": true,  "start_time": "09:00", "end_time": "18:00", "break_minutes": 60, "expected_hours": 8.0},
+  {"id": "sd-004", "schedule_id": "sched-001", "day_of_week": "THURSDAY",  "is_working": true,  "start_time": "09:00", "end_time": "18:00", "break_minutes": 60, "expected_hours": 8.0},
+  {"id": "sd-005", "schedule_id": "sched-001", "day_of_week": "FRIDAY",    "is_working": true,  "start_time": "09:00", "end_time": "18:00", "break_minutes": 60, "expected_hours": 8.0},
+  {"id": "sd-006", "schedule_id": "sched-001", "day_of_week": "SATURDAY",  "is_working": false, "start_time": null,    "end_time": null,    "break_minutes": 0,  "expected_hours": 0.0},
+  {"id": "sd-007", "schedule_id": "sched-001", "day_of_week": "SUNDAY",    "is_working": false, "start_time": null,    "end_time": null,    "break_minutes": 0,  "expected_hours": 0.0},
+
+  {"id": "sd-008", "schedule_id": "sched-002", "day_of_week": "MONDAY",    "is_working": true,  "start_time": "10:00", "end_time": "19:00", "break_minutes": 60, "expected_hours": 8.0},
+  {"id": "sd-009", "schedule_id": "sched-002", "day_of_week": "TUESDAY",   "is_working": true,  "start_time": "10:00", "end_time": "19:00", "break_minutes": 60, "expected_hours": 8.0},
+  {"id": "sd-010", "schedule_id": "sched-002", "day_of_week": "WEDNESDAY", "is_working": true,  "start_time": "10:00", "end_time": "19:00", "break_minutes": 60, "expected_hours": 8.0},
+  {"id": "sd-011", "schedule_id": "sched-002", "day_of_week": "THURSDAY",  "is_working": true,  "start_time": "10:00", "end_time": "19:00", "break_minutes": 60, "expected_hours": 8.0},
+  {"id": "sd-012", "schedule_id": "sched-002", "day_of_week": "FRIDAY",    "is_working": true,  "start_time": "10:00", "end_time": "19:00", "break_minutes": 60, "expected_hours": 8.0},
+  {"id": "sd-013", "schedule_id": "sched-002", "day_of_week": "SATURDAY",  "is_working": false, "start_time": null,    "end_time": null,    "break_minutes": 0,  "expected_hours": 0.0},
+  {"id": "sd-014", "schedule_id": "sched-002", "day_of_week": "SUNDAY",    "is_working": false, "start_time": null,    "end_time": null,    "break_minutes": 0,  "expected_hours": 0.0},
+
+  {"id": "sd-015", "schedule_id": "sched-003", "day_of_week": "MONDAY",    "is_working": true,  "start_time": "09:00", "end_time": "14:00", "break_minutes": 30, "expected_hours": 4.5},
+  {"id": "sd-016", "schedule_id": "sched-003", "day_of_week": "TUESDAY",   "is_working": false, "start_time": null,    "end_time": null,    "break_minutes": 0,  "expected_hours": 0.0},
+  {"id": "sd-017", "schedule_id": "sched-003", "day_of_week": "WEDNESDAY", "is_working": true,  "start_time": "09:00", "end_time": "14:00", "break_minutes": 30, "expected_hours": 4.5},
+  {"id": "sd-018", "schedule_id": "sched-003", "day_of_week": "THURSDAY",  "is_working": false, "start_time": null,    "end_time": null,    "break_minutes": 0,  "expected_hours": 0.0},
+  {"id": "sd-019", "schedule_id": "sched-003", "day_of_week": "FRIDAY",    "is_working": true,  "start_time": "09:00", "end_time": "14:00", "break_minutes": 30, "expected_hours": 4.5},
+  {"id": "sd-020", "schedule_id": "sched-003", "day_of_week": "SATURDAY",  "is_working": false, "start_time": null,    "end_time": null,    "break_minutes": 0,  "expected_hours": 0.0},
+  {"id": "sd-021", "schedule_id": "sched-003", "day_of_week": "SUNDAY",    "is_working": false, "start_time": null,    "end_time": null,    "break_minutes": 0,  "expected_hours": 0.0}
+]

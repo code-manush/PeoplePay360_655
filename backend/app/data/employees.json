@@ -1,0 +1,222 @@
+[
+  {
+    "id": "emp-001", "employee_code": "PP001", "user_id": null,
+    "first_name": "Arjun", "last_name": "Sharma", "email": "arjun.sharma@peoplepay.in",
+    "phone": "+91-9876543001", "date_of_birth": "1988-05-15",
+    "gender": "MALE", "address": "42 MG Road, Bangalore, Karnataka 560001",
+    "emergency_contact_name": "Priya Sharma", "emergency_contact_phone": "+91-9876543101",
+    "department_id": "dept-001", "job_position_id": "pos-001", "manager_id": null,
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2021-03-01", "avatar_url": null,
+    "is_active": true, "created_at": "2021-03-01T09:00:00Z", "updated_at": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": "emp-002", "employee_code": "PP002", "user_id": null,
+    "first_name": "Priya", "last_name": "Nair", "email": "priya.nair@peoplepay.in",
+    "phone": "+91-9876543002", "date_of_birth": "1993-08-22",
+    "gender": "FEMALE", "address": "15 Brigade Road, Bangalore, Karnataka 560025",
+    "emergency_contact_name": "Rajan Nair", "emergency_contact_phone": "+91-9876543102",
+    "department_id": "dept-001", "job_position_id": "pos-002", "manager_id": "emp-001",
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2022-06-15", "avatar_url": null,
+    "is_active": true, "created_at": "2022-06-15T09:00:00Z", "updated_at": "2024-01-10T11:00:00Z"
+  },
+  {
+    "id": "emp-003", "employee_code": "PP003", "user_id": null,
+    "first_name": "Rahul", "last_name": "Verma", "email": "rahul.verma@peoplepay.in",
+    "phone": "+91-9876543003", "date_of_birth": "1995-12-10",
+    "gender": "MALE", "address": "78 Koramangala, Bangalore, Karnataka 560034",
+    "emergency_contact_name": "Sunita Verma", "emergency_contact_phone": "+91-9876543103",
+    "department_id": "dept-001", "job_position_id": "pos-003", "manager_id": "emp-002",
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2023-09-01", "avatar_url": null,
+    "is_active": true, "created_at": "2023-09-01T09:00:00Z", "updated_at": "2024-01-05T09:30:00Z"
+  },
+  {
+    "id": "emp-004", "employee_code": "PP004", "user_id": null,
+    "first_name": "Kavya", "last_name": "Reddy", "email": "kavya.reddy@peoplepay.in",
+    "phone": "+91-9876543004", "date_of_birth": "1990-03-28",
+    "gender": "FEMALE", "address": "22 Indiranagar, Bangalore, Karnataka 560038",
+    "emergency_contact_name": "Suresh Reddy", "emergency_contact_phone": "+91-9876543104",
+    "department_id": "dept-001", "job_position_id": "pos-004", "manager_id": "emp-001",
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2022-01-10", "avatar_url": null,
+    "is_active": true, "created_at": "2022-01-10T09:00:00Z", "updated_at": "2024-01-12T14:00:00Z"
+  },
+  {
+    "id": "emp-005", "employee_code": "PP005", "user_id": null,
+    "first_name": "Aditya", "last_name": "Kulkarni", "email": "aditya.kulkarni@peoplepay.in",
+    "phone": "+91-9876543005", "date_of_birth": "1997-07-04",
+    "gender": "MALE", "address": "55 Whitefield, Bangalore, Karnataka 560066",
+    "emergency_contact_name": "Meera Kulkarni", "emergency_contact_phone": "+91-9876543105",
+    "department_id": "dept-001", "job_position_id": "pos-005", "manager_id": "emp-002",
+    "employment_type": "CONTRACT", "employment_status": "ACTIVE",
+    "date_joined": "2024-01-15", "avatar_url": null,
+    "is_active": true, "created_at": "2024-01-15T09:00:00Z", "updated_at": "2024-01-15T09:00:00Z"
+  },
+  {
+    "id": "emp-006", "employee_code": "PP006", "user_id": null,
+    "first_name": "Sneha", "last_name": "Patel", "email": "sneha.patel@peoplepay.in",
+    "phone": "+91-9876543006", "date_of_birth": "1985-11-18",
+    "gender": "FEMALE", "address": "10 Jayanagar, Bangalore, Karnataka 560041",
+    "emergency_contact_name": "Rajesh Patel", "emergency_contact_phone": "+91-9876543106",
+    "department_id": "dept-002", "job_position_id": "pos-006", "manager_id": null,
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2020-07-01", "avatar_url": null,
+    "is_active": true, "created_at": "2020-07-01T09:00:00Z", "updated_at": "2024-01-08T16:00:00Z"
+  },
+  {
+    "id": "emp-007", "employee_code": "PP007", "user_id": null,
+    "first_name": "Vikram", "last_name": "Singh", "email": "vikram.singh@peoplepay.in",
+    "phone": "+91-9876543007", "date_of_birth": "1992-04-30",
+    "gender": "MALE", "address": "33 HSR Layout, Bangalore, Karnataka 560102",
+    "emergency_contact_name": "Anita Singh", "emergency_contact_phone": "+91-9876543107",
+    "department_id": "dept-002", "job_position_id": "pos-007", "manager_id": "emp-006",
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2022-03-20", "avatar_url": null,
+    "is_active": true, "created_at": "2022-03-20T09:00:00Z", "updated_at": "2024-01-09T10:00:00Z"
+  },
+  {
+    "id": "emp-008", "employee_code": "PP008", "user_id": null,
+    "first_name": "Divya", "last_name": "Menon", "email": "divya.menon@peoplepay.in",
+    "phone": "+91-9876543008", "date_of_birth": "2001-01-25",
+    "gender": "FEMALE", "address": "88 BTM Layout, Bangalore, Karnataka 560076",
+    "emergency_contact_name": "Suresh Menon", "emergency_contact_phone": "+91-9876543108",
+    "department_id": "dept-002", "job_position_id": "pos-008", "manager_id": "emp-007",
+    "employment_type": "INTERN", "employment_status": "ACTIVE",
+    "date_joined": "2024-06-01", "avatar_url": null,
+    "is_active": true, "created_at": "2024-06-01T09:00:00Z", "updated_at": "2024-06-01T09:00:00Z"
+  },
+  {
+    "id": "emp-009", "employee_code": "PP009", "user_id": null,
+    "first_name": "Suresh", "last_name": "Gupta", "email": "suresh.gupta@peoplepay.in",
+    "phone": "+91-9876543009", "date_of_birth": "1982-09-12",
+    "gender": "MALE", "address": "5 Rajajinagar, Bangalore, Karnataka 560010",
+    "emergency_contact_name": "Kamla Gupta", "emergency_contact_phone": "+91-9876543109",
+    "department_id": "dept-003", "job_position_id": "pos-009", "manager_id": null,
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2019-11-01", "avatar_url": null,
+    "is_active": true, "created_at": "2019-11-01T09:00:00Z", "updated_at": "2024-01-07T11:30:00Z"
+  },
+  {
+    "id": "emp-010", "employee_code": "PP010", "user_id": null,
+    "first_name": "Ananya", "last_name": "Iyer", "email": "ananya.iyer@peoplepay.in",
+    "phone": "+91-9876543010", "date_of_birth": "1994-02-14",
+    "gender": "FEMALE", "address": "67 Malleshwaram, Bangalore, Karnataka 560003",
+    "emergency_contact_name": "Krishnan Iyer", "emergency_contact_phone": "+91-9876543110",
+    "department_id": "dept-003", "job_position_id": "pos-010", "manager_id": "emp-009",
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2021-08-16", "avatar_url": null,
+    "is_active": true, "created_at": "2021-08-16T09:00:00Z", "updated_at": "2024-01-11T15:00:00Z"
+  },
+  {
+    "id": "emp-011", "employee_code": "PP011", "user_id": null,
+    "first_name": "Rohan", "last_name": "Mehta", "email": "rohan.mehta@peoplepay.in",
+    "phone": "+91-9876543011", "date_of_birth": "1996-06-08",
+    "gender": "MALE", "address": "44 Yelahanka, Bangalore, Karnataka 560064",
+    "emergency_contact_name": "Geeta Mehta", "emergency_contact_phone": "+91-9876543111",
+    "department_id": "dept-003", "job_position_id": "pos-010", "manager_id": "emp-009",
+    "employment_type": "PART_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2023-04-01", "avatar_url": null,
+    "is_active": true, "created_at": "2023-04-01T09:00:00Z", "updated_at": "2024-01-06T09:00:00Z"
+  },
+  {
+    "id": "emp-012", "employee_code": "PP012", "user_id": null,
+    "first_name": "Neha", "last_name": "Joshi", "email": "neha.joshi@peoplepay.in",
+    "phone": "+91-9876543012", "date_of_birth": "1987-10-20",
+    "gender": "FEMALE", "address": "99 Marathahalli, Bangalore, Karnataka 560037",
+    "emergency_contact_name": "Anil Joshi", "emergency_contact_phone": "+91-9876543112",
+    "department_id": "dept-004", "job_position_id": "pos-011", "manager_id": null,
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2020-03-15", "avatar_url": null,
+    "is_active": true, "created_at": "2020-03-15T09:00:00Z", "updated_at": "2024-01-14T13:30:00Z"
+  },
+  {
+    "id": "emp-013", "employee_code": "PP013", "user_id": null,
+    "first_name": "Kiran", "last_name": "Bhat", "email": "kiran.bhat@peoplepay.in",
+    "phone": "+91-9876543013", "date_of_birth": "1991-03-05",
+    "gender": "MALE", "address": "71 Electronic City, Bangalore, Karnataka 560100",
+    "emergency_contact_name": "Usha Bhat", "emergency_contact_phone": "+91-9876543113",
+    "department_id": "dept-004", "job_position_id": "pos-012", "manager_id": "emp-012",
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2022-09-01", "avatar_url": null,
+    "is_active": true, "created_at": "2022-09-01T09:00:00Z", "updated_at": "2024-01-10T10:00:00Z"
+  },
+  {
+    "id": "emp-014", "employee_code": "PP014", "user_id": null,
+    "first_name": "Meera", "last_name": "Krishnan", "email": "meera.krishnan@peoplepay.in",
+    "phone": "+91-9876543014", "date_of_birth": "1998-08-15",
+    "gender": "FEMALE", "address": "12 Bannerghatta Road, Bangalore, Karnataka 560076",
+    "emergency_contact_name": "Sathish Krishnan", "emergency_contact_phone": "+91-9876543114",
+    "department_id": "dept-004", "job_position_id": "pos-012", "manager_id": "emp-012",
+    "employment_type": "CONTRACT", "employment_status": "ACTIVE",
+    "date_joined": "2023-11-01", "avatar_url": null,
+    "is_active": true, "created_at": "2023-11-01T09:00:00Z", "updated_at": "2024-01-08T09:00:00Z"
+  },
+  {
+    "id": "emp-015", "employee_code": "PP015", "user_id": null,
+    "first_name": "Sameer", "last_name": "Khan", "email": "sameer.khan@peoplepay.in",
+    "phone": "+91-9876543015", "date_of_birth": "1984-12-01",
+    "gender": "MALE", "address": "30 Hebbal, Bangalore, Karnataka 560024",
+    "emergency_contact_name": "Fatima Khan", "emergency_contact_phone": "+91-9876543115",
+    "department_id": "dept-005", "job_position_id": "pos-013", "manager_id": null,
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2018-06-01", "avatar_url": null,
+    "is_active": true, "created_at": "2018-06-01T09:00:00Z", "updated_at": "2024-01-13T16:30:00Z"
+  },
+  {
+    "id": "emp-016", "employee_code": "PP016", "user_id": null,
+    "first_name": "Ritu", "last_name": "Desai", "email": "ritu.desai@peoplepay.in",
+    "phone": "+91-9876543016", "date_of_birth": "1993-07-12",
+    "gender": "FEMALE", "address": "58 Sadashivanagar, Bangalore, Karnataka 560080",
+    "emergency_contact_name": "Prakash Desai", "emergency_contact_phone": "+91-9876543116",
+    "department_id": "dept-005", "job_position_id": "pos-014", "manager_id": "emp-015",
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2022-11-01", "avatar_url": null,
+    "is_active": true, "created_at": "2022-11-01T09:00:00Z", "updated_at": "2024-01-09T11:00:00Z"
+  },
+  {
+    "id": "emp-017", "employee_code": "PP017", "user_id": null,
+    "first_name": "Deepak", "last_name": "Rao", "email": "deepak.rao@peoplepay.in",
+    "phone": "+91-9876543017", "date_of_birth": "1989-01-18",
+    "gender": "MALE", "address": "25 Basavanagudi, Bangalore, Karnataka 560004",
+    "emergency_contact_name": "Lakshmi Rao", "emergency_contact_phone": "+91-9876543117",
+    "department_id": "dept-001", "job_position_id": "pos-002", "manager_id": "emp-001",
+    "employment_type": "FULL_TIME", "employment_status": "INACTIVE",
+    "date_joined": "2021-05-01", "avatar_url": null,
+    "is_active": false, "created_at": "2021-05-01T09:00:00Z", "updated_at": "2024-08-01T09:00:00Z"
+  },
+  {
+    "id": "emp-018", "employee_code": "PP018", "user_id": null,
+    "first_name": "Lalitha", "last_name": "Subramaniam", "email": "lalitha.subramaniam@peoplepay.in",
+    "phone": "+91-9876543018", "date_of_birth": "1996-09-28",
+    "gender": "FEMALE", "address": "16 JP Nagar, Bangalore, Karnataka 560078",
+    "emergency_contact_name": "Raman Subramaniam", "emergency_contact_phone": "+91-9876543118",
+    "department_id": "dept-002", "job_position_id": "pos-007", "manager_id": "emp-006",
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2023-01-09", "avatar_url": null,
+    "is_active": true, "created_at": "2023-01-09T09:00:00Z", "updated_at": "2024-01-11T10:00:00Z"
+  },
+  {
+    "id": "emp-019", "employee_code": "PP019", "user_id": null,
+    "first_name": "Bharat", "last_name": "Chauhan", "email": "bharat.chauhan@peoplepay.in",
+    "phone": "+91-9876543019", "date_of_birth": "1999-04-17",
+    "gender": "MALE", "address": "40 Sarjapur Road, Bangalore, Karnataka 560035",
+    "emergency_contact_name": "Sundar Chauhan", "emergency_contact_phone": "+91-9876543119",
+    "department_id": "dept-001", "job_position_id": "pos-003", "manager_id": "emp-002",
+    "employment_type": "INTERN", "employment_status": "ACTIVE",
+    "date_joined": "2024-07-01", "avatar_url": null,
+    "is_active": true, "created_at": "2024-07-01T09:00:00Z", "updated_at": "2024-07-01T09:00:00Z"
+  },
+  {
+    "id": "emp-020", "employee_code": "PP020", "user_id": null,
+    "first_name": "Pooja", "last_name": "Agarwal", "email": "pooja.agarwal@peoplepay.in",
+    "phone": "+91-9876543020", "date_of_birth": "1990-11-05",
+    "gender": "FEMALE", "address": "9 Jayanagar 4th Block, Bangalore, Karnataka 560041",
+    "emergency_contact_name": "Vinod Agarwal", "emergency_contact_phone": "+91-9876543120",
+    "department_id": "dept-003", "job_position_id": "pos-010", "manager_id": "emp-009",
+    "employment_type": "FULL_TIME", "employment_status": "ACTIVE",
+    "date_joined": "2023-02-20", "avatar_url": null,
+    "is_active": true, "created_at": "2023-02-20T09:00:00Z", "updated_at": "2024-01-12T09:00:00Z"
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {"id": "sr-001", "name": "Basic Salary", "code": "BASIC", "category": "BASIC", "sequence": 10, "description": "Base salary equal to contract wage, pro-rated for worked days", "is_active": true},
+  {"id": "sr-002", "name": "House Rent Allowance", "code": "HRA", "category": "ALLOWANCE", "sequence": 20, "description": "Housing allowance at 40% of Basic salary", "is_active": true},
+  {"id": "sr-003", "name": "Transport Allowance", "code": "TRANSPORT", "category": "ALLOWANCE", "sequence": 30, "description": "Fixed monthly transport allowance", "is_active": true},
+  {"id": "sr-004", "name": "Gross Salary", "code": "GROSS", "category": "GROSS", "sequence": 40, "description": "Sum of all earnings before deductions", "is_active": true},
+  {"id": "sr-005", "name": "Provident Fund (Employee)", "code": "PF_EMP", "category": "DEDUCTION", "sequence": 50, "description": "Employee contribution to PF at 12% of Basic", "is_active": true},
+  {"id": "sr-006", "name": "Professional Tax", "code": "PT", "category": "DEDUCTION", "sequence": 60, "description": "Statutory professional tax deduction", "is_active": true},
+  {"id": "sr-007", "name": "Net Salary", "code": "NET", "category": "NET", "sequence": 100, "description": "Final take-home salary after all deductions", "is_active": true},
+  {"id": "sr-008", "name": "Provident Fund (Employer)", "code": "PF_EMP_CONTRIB", "category": "CONTRIBUTION", "sequence": 55, "description": "Employer contribution to PF at 12% of Basic (not deducted from employee)", "is_active": true},
+  {"id": "sr-009", "name": "Overtime Pay", "code": "OVERTIME", "category": "ALLOWANCE", "sequence": 35, "description": "Overtime hours compensation at hourly rate x 1.5", "is_active": true},
+  {"id": "sr-010", "name": "Basic Contract", "code": "BASIC_CONTRACT", "category": "BASIC", "sequence": 10, "description": "Basic pay for contract employees (contract wage only)", "is_active": true},
+  {"id": "sr-011", "name": "Contract Gross", "code": "CONTRACT_GROSS", "category": "GROSS", "sequence": 40, "description": "Gross for contract employees", "is_active": true},
+  {"id": "sr-012", "name": "TDS", "code": "TDS", "category": "DEDUCTION", "sequence": 65, "description": "Tax deduction at source for contract employees at 10%", "is_active": true},
+  {"id": "sr-013", "name": "Contract Net", "code": "CONTRACT_NET", "category": "NET", "sequence": 100, "description": "Net pay for contract employees", "is_active": true},
+  {"id": "sr-014", "name": "Intern Stipend", "code": "STIPEND", "category": "BASIC", "sequence": 10, "description": "Fixed monthly stipend for interns", "is_active": true},
+  {"id": "sr-015", "name": "Intern Net", "code": "INTERN_NET", "category": "NET", "sequence": 100, "description": "Net stipend amount for interns", "is_active": true}
+]
