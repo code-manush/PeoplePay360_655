@@ -1,23 +1,25 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  border-radius: 9999px;
-  padding: 0.125rem 0.625rem;
-  font-size: 0.75rem;
+  border-radius: var(--radius-sm, 4px);
+  padding: 0.125rem 0.5rem;
+  font-size: 0.6875rem;
   font-weight: 600;
-  line-height: 1rem;
+  line-height: 1.2rem;
   white-space: nowrap;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .default {
-  background-color: var(--bg-secondary);
+  background-color: var(--border-light);
   color: var(--text-secondary);
   border: 1px solid var(--border-color);
 }
 
 .primary {
-  background-color: var(--brand-primary);
-  color: white;
+  background-color: var(--brand-light, #e8f3fd);
+  color: var(--brand-primary);
 }
 
 .success {
@@ -40,3 +42,4 @@
   color: var(--text-secondary);
   border: 1px solid var(--border-color);
 }
+

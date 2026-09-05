@@ -1,12 +1,12 @@
 .card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: box-shadow var(--transition-normal);
+  transition: box-shadow var(--transition-fast);
 }
 
 .card:hover {
@@ -14,20 +14,22 @@
 }
 
 .header {
-  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+  padding: 1.25rem 1.5rem 0.75rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .title {
-  font-size: 1.125rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.3;
   color: var(--text-primary);
 }
 
 .content {
-  padding: 1.5rem;
+  padding: 1.25rem 1.5rem;
   flex-grow: 1;
 }
+

@@ -23,11 +23,12 @@
 }
 
 .contentInner {
-  padding: 2rem;
+  padding: 1.75rem 2rem;
   max-width: 1600px;
   margin: 0 auto;
   width: 100%;
 }
+
 
 @media (max-width: 768px) {
   .contentInner {

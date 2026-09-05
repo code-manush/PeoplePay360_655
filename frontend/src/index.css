@@ -1,73 +1,79 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Premium Dark/Light Glassmorphism Theme Tokens */
-  --bg-primary: #f8fafc;
+  /* Notion-inspired Clean Theme */
+  --bg-primary: #f7f7f5;
   --bg-secondary: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  
-  --brand-primary: #2563eb;
-  --brand-primary-hover: #1d4ed8;
-  --brand-secondary: #3b82f6;
-  --brand-accent: #60a5fa;
+  --bg-hover: #f0efed;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5c5c5c;
+  --text-muted: #999999;
 
-  --success: #10b981;
-  --success-bg: #d1fae5;
-  --success-text: #065f46;
-  
-  --warning: #f59e0b;
-  --warning-bg: #fef3c7;
-  --warning-text: #92400e;
-  
-  --danger: #ef4444;
-  --danger-bg: #fee2e2;
-  --danger-text: #991b1b;
-  
-  --border-color: #e2e8f0;
-  --border-light: #f1f5f9;
+  --brand-primary: #2383e2;
+  --brand-primary-hover: #1a6fc4;
+  --brand-secondary: #4da0f0;
+  --brand-accent: #87c2f7;
+  --brand-light: #e8f3fd;
 
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-glow: 0 0 15px rgba(37, 99, 235, 0.3);
+  --success: #0f9e6c;
+  --success-bg: #e6f5ef;
+  --success-text: #0a6b4a;
+
+  --warning: #d9930d;
+  --warning-bg: #fdf3e3;
+  --warning-text: #8a5c00;
+
+  --danger: #e53935;
+  --danger-bg: #fdecea;
+  --danger-text: #a11111;
+
+  --border-color: #e8e8e6;
+  --border-light: #f0f0ee;
+  --border-strong: #d4d4d0;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.10), 0 4px 8px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 0 3px rgba(35, 131, 226, 0.18);
 
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
   --radius-2xl: 1rem;
-  
+
   --font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.3s ease;
+  --transition-fast: 0.12s ease;
+  --transition-normal: 0.22s ease;
 }
 
-/* Dark Mode Overrides */
+/* Dark Mode */
 [data-theme='dark'] {
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #64748b;
-  
-  --brand-primary: #3b82f6;
-  --brand-primary-hover: #60a5fa;
-  --brand-secondary: #2563eb;
-  
-  --success-bg: #064e3b;
-  --success-text: #34d399;
-  
-  --warning-bg: #78350f;
-  --warning-text: #fbbf24;
-  
-  --danger-bg: #7f1d1d;
-  --danger-text: #f87171;
-  
-  --border-color: #334155;
-  --border-light: #1e293b;
+  --bg-primary: #191919;
+  --bg-secondary: #252525;
+  --bg-hover: #2f2f2f;
+  --text-primary: #eeeeee;
+  --text-secondary: #a8a8a8;
+  --text-muted: #6b6b6b;
+
+  --brand-primary: #4da0f0;
+  --brand-primary-hover: #70b5f4;
+  --brand-light: #1a2e40;
+
+  --success-bg: #0d2e1f;
+  --success-text: #4cd9a0;
+
+  --warning-bg: #2e1d00;
+  --warning-text: #f5c250;
+
+  --danger-bg: #2e0d0d;
+  --danger-text: #f47070;
+
+  --border-color: #333333;
+  --border-light: #2a2a2a;
+  --border-strong: #444444;
 }
+
 
 * {
   box-sizing: border-box;
@@ -87,6 +93,7 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
 }
 
 a {
@@ -108,45 +115,53 @@ button {
 
 input, select, textarea {
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 14px;
 }
 
 .formLabel {
   display: block;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.01em;
 }
 
 .formInput {
   width: 100%;
   border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   color: var(--text-primary);
   border-radius: var(--radius-md);
-  padding: 0.6rem 0.75rem;
+  padding: 0.55rem 0.75rem;
   outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  font-size: 0.875rem;
 }
 
 .formInput:focus {
   border-color: var(--brand-primary);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 2px rgba(35, 131, 226, 0.15);
+}
+
+.formInput::placeholder {
+  color: var(--text-muted);
 }
 
 .formError {
   color: var(--danger);
   font-size: 0.8rem;
+  margin-top: 0.25rem;
 }
 
-/* Utility classes for layout & common styles */
+/* Glass Panel */
 .glass-panel {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
-  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
 }
+
 
 .flex { display: flex; }
 .flex-col { flex-direction: column; }
@@ -187,18 +202,18 @@ input, select, textarea {
   animation: fadeIn 0.4s ease forwards;
 }
 
-/* Scrollbar */
+/* Scrollbar - minimal Notion style */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary); 
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-color); 
-  border-radius: 4px;
+  background: var(--border-strong, #d4d4d0);
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted); 
+  background: var(--text-muted);
 }

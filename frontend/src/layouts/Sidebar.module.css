@@ -1,5 +1,5 @@
 .sidebar {
-  width: 280px;
+  width: 240px;
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   display: flex;
@@ -10,90 +10,97 @@
 }
 
 .logoContainer {
-  height: 72px;
+  height: 64px;
   display: flex;
   align-items: center;
-  padding: 0 1.5rem;
+  padding: 0 1.25rem;
   border-bottom: 1px solid var(--border-light);
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .logoIcon {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
+  width: 28px;
+  height: 28px;
+  background: var(--brand-primary);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+  flex-shrink: 0;
 }
 
 .logoShape {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   background-color: white;
-  border-radius: 50%;
+  border-radius: 2px;
 }
 
 .logoText {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .brandName {
-  font-size: 1.125rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brandSub {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: var(--text-muted);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
 .navMenu {
   flex: 1;
-  padding: 1.5rem 1rem;
+  padding: 0.75rem 0.5rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.125rem;
 }
 
 .navItem {
   display: flex;
   align-items: center;
-  padding: 0.75rem 1rem;
+  padding: 0.4375rem 0.75rem;
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   text-decoration: none;
   font-weight: 500;
+  font-size: 0.875rem;
   transition: all var(--transition-fast);
   position: relative;
-  gap: 1rem;
+  gap: 0.625rem;
 }
 
 .navItem:hover {
-  background-color: var(--border-light);
+  background-color: var(--bg-hover, #f0efed);
   color: var(--text-primary);
 }
 
 .navIcon {
   color: var(--text-muted);
   transition: color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .navItem:hover .navIcon {
-  color: var(--brand-primary);
+  color: var(--text-primary);
 }
 
 .active {
-  background-color: rgba(37, 99, 235, 0.05);
+  background-color: var(--brand-light, #e8f3fd);
   color: var(--brand-primary);
   font-weight: 600;
 }
@@ -103,65 +110,66 @@
 }
 
 .activeIndicator {
-  position: absolute;
-  left: -1rem;
-  top: 15%;
-  height: 70%;
-  width: 4px;
-  background-color: var(--brand-primary);
-  border-radius: 0 4px 4px 0;
+  display: none;
 }
 
 .sidebarFooter {
-  padding: 1rem;
+  padding: 0.75rem 0.5rem;
   border-top: 1px solid var(--border-light);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 }
 
 .userInfo {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem;
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-color);
+  gap: 0.625rem;
+  padding: 0.5rem 0.625rem;
+  border-radius: var(--radius-md);
+  cursor: default;
+  transition: background-color var(--transition-fast);
+}
+
+.userInfo:hover {
+  background-color: var(--bg-hover, #f0efed);
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   background-color: var(--brand-primary);
   color: white;
-  border-radius: 50%;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 0.875rem;
+  font-weight: 700;
+  font-size: 0.6875rem;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
 }
 
 .userDetails {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  flex: 1;
+  min-width: 0;
 }
 
 .userName {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
 .userRole {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+

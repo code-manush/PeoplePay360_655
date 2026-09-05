@@ -11,15 +11,16 @@ const Landing: React.FC = () => {
         <div className={styles.logo}>PeoplePay360</div>
         <nav className={styles.nav}>
           <button className={styles.signInBtn} onClick={() => navigate('/login')}>Sign In</button>
-          <button className={styles.registerBtn} onClick={() => navigate('/register')}>Register</button>
+          <button className={styles.registerBtn} onClick={() => navigate('/register')}>Get Started</button>
         </nav>
       </header>
       
       <main className={styles.mainContent}>
         <div className={styles.heroSection}>
-          <h1 className={styles.title}>Integrated HR & Payroll Operations Platform</h1>
+          <span className={styles.eyebrow}>HR &amp; Payroll Platform</span>
+          <h1 className={styles.title}>People operations,<br />simplified.</h1>
           <p className={styles.subtitle}>
-            A centralized solution to manage employee lifecycles, attendance, time off, contracts, and payroll all in one place.
+            A centralized solution to manage employee lifecycles, attendance, time off, contracts, and payroll — all in one place.
           </p>
           <div className={styles.actionButtons}>
             <button className={styles.primaryBtn} onClick={() => navigate('/register')}>
@@ -33,14 +34,17 @@ const Landing: React.FC = () => {
 
         <div className={styles.featuresSection}>
           <div className={styles.featureCard}>
+            <div className={styles.featureIconBox}>👥</div>
             <h3>Unified HR Flow</h3>
             <p>Centralized employee records with seamless navigation to Contracts, Attendance, and Time Off.</p>
           </div>
           <div className={styles.featureCard}>
+            <div className={styles.featureIconBox}>📊</div>
             <h3>Operational Tracking</h3>
-            <p>Implement flexible Working Schedules, attendance tracking, and comprehensive Time Off.</p>
+            <p>Implement flexible Working Schedules, attendance tracking, and comprehensive Time Off management.</p>
           </div>
           <div className={styles.featureCard}>
+            <div className={styles.featureIconBox}>💳</div>
             <h3>Payroll Processing</h3>
             <p>Enable a two-step pay run workflow with automated salary computation and payslip generation.</p>
           </div>
