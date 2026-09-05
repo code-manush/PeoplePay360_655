@@ -14,6 +14,7 @@ import Settings from './pages/Settings/Settings';
 import Login from './pages/Login';
 import Landing from './pages/Landing/Landing';
 import Register from './pages/Register/Register';
+import AIAgent from './pages/AIAgent/AIAgent';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -43,6 +44,7 @@ function App() {
             <Route path="/reports" element={<Reports />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/ai-agent" element={<AIAgent />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

@@ -56,6 +56,8 @@ apiClient.interceptors.response.use(
 export function unwrapList<T = any>(response: any): T[] {
   if (Array.isArray(response)) return response;
   if (Array.isArray(response?.data)) return response.data;
+  if (Array.isArray(response?.data?.items)) return response.data.items;
+  if (Array.isArray(response?.items)) return response.items;
   return [];
 }
 

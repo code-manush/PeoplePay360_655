@@ -25,6 +25,7 @@ from app.api.routes.dashboard import router as dashboard_router, stats_router
 from app.api.routes.audit import router as audit_router
 from app.api.routes.auth import router as auth_router
 from app.api.routes.reports import router as reports_router
+from app.api.routes.ai import router as ai_router
 
 app = FastAPI(
     title=settings.app_name,
@@ -89,6 +90,7 @@ app.include_router(payroll_router, prefix=API_PREFIX)
 app.include_router(payroll_config_router, prefix=API_PREFIX)
 app.include_router(notifications_router, prefix=API_PREFIX)
 app.include_router(audit_router, prefix=API_PREFIX)
+app.include_router(ai_router, prefix=API_PREFIX)
 
 
 @app.exception_handler(HTTPException)
