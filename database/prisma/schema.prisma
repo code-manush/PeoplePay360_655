@@ -1,0 +1,674 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../generated/prisma"
+  previewFeatures = ["multiSchema", "partialIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["attendance", "audit", "hr", "identity", "leave_management", "organization", "payroll", "payroll_config"]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model attendance_records {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_id     String    @db.Uuid
+  attendance_date DateTime  @db.Date
+  check_in        DateTime? @db.Timestamptz(6)
+  check_out       DateTime? @db.Timestamptz(6)
+  scheduled_hours Decimal?  @default(0) @db.Decimal(6, 2)
+  worked_hours    Decimal?  @default(0) @db.Decimal(6, 2)
+  overtime_hours  Decimal?  @default(0) @db.Decimal(6, 2)
+  status          String    @default("PRESENT") @db.VarChar(30)
+  notes           String?
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime  @default(now()) @db.Timestamptz(6)
+  employees       employees @relation(fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_attendance_employee")
+
+  @@unique([employee_id, attendance_date], map: "uq_employee_attendance_date")
+  @@index([attendance_date], map: "idx_attendance_date")
+  @@index([employee_id, attendance_date], map: "idx_attendance_employee_date")
+  @@schema("attendance")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model employee_schedules {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_id    String    @db.Uuid
+  schedule_id    String    @db.Uuid
+  effective_from DateTime  @db.Date
+  effective_to   DateTime? @db.Date
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  employees      employees @relation(fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_employee_schedule_employee")
+  schedules      schedules @relation(fields: [schedule_id], references: [id], onUpdate: NoAction, map: "fk_employee_schedule_schedule")
+
+  @@index([effective_from, effective_to], map: "idx_employee_schedules_dates")
+  @@index([employee_id], map: "idx_employee_schedules_employee")
+  @@schema("attendance")
+}
+
+model schedules {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String               @unique @db.VarChar(100)
+  description        String?
+  monday_start       DateTime?            @db.Time(6)
+  monday_end         DateTime?            @db.Time(6)
+  tuesday_start      DateTime?            @db.Time(6)
+  tuesday_end        DateTime?            @db.Time(6)
+  wednesday_start    DateTime?            @db.Time(6)
+  wednesday_end      DateTime?            @db.Time(6)
+  thursday_start     DateTime?            @db.Time(6)
+  thursday_end       DateTime?            @db.Time(6)
+  friday_start       DateTime?            @db.Time(6)
+  friday_end         DateTime?            @db.Time(6)
+  saturday_start     DateTime?            @db.Time(6)
+  saturday_end       DateTime?            @db.Time(6)
+  sunday_start       DateTime?            @db.Time(6)
+  sunday_end         DateTime?            @db.Time(6)
+  created_at         DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime             @default(now()) @db.Timestamptz(6)
+  employee_schedules employee_schedules[]
+
+  @@schema("attendance")
+}
+
+model audit_logs {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String?  @db.Uuid
+  action        String   @db.VarChar(100)
+  entity_schema String?  @db.VarChar(100)
+  entity_table  String?  @db.VarChar(100)
+  entity_id     String?  @db.Uuid
+  old_values    Json?
+  new_values    Json?
+  ip_address    String?  @db.Inet
+  user_agent    String?
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  users         users?   @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "fk_audit_user")
+
+  @@index([created_at], map: "idx_audit_created_at")
+  @@index([entity_schema, entity_table, entity_id], map: "idx_audit_entity")
+  @@index([user_id], map: "idx_audit_user")
+  @@schema("audit")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This table contains exclusion constraints and requires additional setup for migrations. Visit https://pris.ly/d/exclusion-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model contracts {
+  id                     String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_id            String             @db.Uuid
+  contract_number        String             @unique @db.VarChar(100)
+  contract_type          String             @default("FULL_TIME") @db.VarChar(30)
+  start_date             DateTime           @db.Date
+  end_date               DateTime?          @db.Date
+  basic_salary           Decimal            @db.Decimal(14, 2)
+  salary_structure_id    String?            @db.Uuid
+  working_hours_per_week Decimal            @default(40) @db.Decimal(5, 2)
+  status                 String             @default("DRAFT") @db.VarChar(30)
+  termination_reason     String?
+  created_at             DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime           @default(now()) @db.Timestamptz(6)
+  employees              employees          @relation(fields: [employee_id], references: [id], onUpdate: NoAction, map: "fk_contract_employee")
+  salary_structures      salary_structures? @relation(fields: [salary_structure_id], references: [id], onUpdate: NoAction, map: "fk_contract_salary_structure")
+  payrun_employees       payrun_employees[]
+  payslips               payslips[]
+
+  @@index([employee_id], map: "idx_contracts_employee")
+  @@index([start_date], map: "idx_contracts_start_date")
+  @@index([status], map: "idx_contracts_status")
+  @@schema("hr")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model employees {
+  id                                                           String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id                                                      String?              @unique @db.Uuid
+  employee_code                                                String               @unique @db.VarChar(50)
+  first_name                                                   String               @db.VarChar(100)
+  last_name                                                    String               @db.VarChar(100)
+  email                                                        String               @unique @db.VarChar(255)
+  phone                                                        String?              @db.VarChar(30)
+  date_of_birth                                                DateTime?            @db.Date
+  joining_date                                                 DateTime             @db.Date
+  leaving_date                                                 DateTime?            @db.Date
+  department_id                                                String?              @db.Uuid
+  job_position_id                                              String?              @db.Uuid
+  manager_id                                                   String?              @db.Uuid
+  employment_type                                              String               @default("FULL_TIME") @db.VarChar(30)
+  status                                                       String               @default("ACTIVE") @db.VarChar(30)
+  created_at                                                   DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at                                                   DateTime             @default(now()) @db.Timestamptz(6)
+  attendance_records                                           attendance_records[]
+  employee_schedules                                           employee_schedules[]
+  contracts                                                    contracts[]
+  departments_employees_department_idTodepartments             departments?         @relation("employees_department_idTodepartments", fields: [department_id], references: [id], onUpdate: NoAction, map: "fk_employee_department")
+  job_positions                                                job_positions?       @relation(fields: [job_position_id], references: [id], onUpdate: NoAction, map: "fk_employee_job_position")
+  employees                                                    employees?           @relation("employeesToemployees", fields: [manager_id], references: [id], onUpdate: NoAction, map: "fk_employee_manager")
+  other_employees                                              employees[]          @relation("employeesToemployees")
+  users                                                        users?               @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "fk_employee_user")
+  employment_history_employment_history_employee_idToemployees employment_history[] @relation("employment_history_employee_idToemployees")
+  employment_history_employment_history_manager_idToemployees  employment_history[] @relation("employment_history_manager_idToemployees")
+  leave_allocations                                            leave_allocations[]
+  leave_requests                                               leave_requests[]
+  departments_departments_manager_employee_idToemployees       departments[]        @relation("departments_manager_employee_idToemployees")
+  payroll_warnings                                             payroll_warnings[]
+  payrun_employees                                             payrun_employees[]
+  payslips                                                     payslips[]
+
+  @@index([department_id], map: "idx_employees_department")
+  @@index([joining_date], map: "idx_employees_joining_date")
+  @@index([manager_id], map: "idx_employees_manager")
+  @@index([status], map: "idx_employees_status")
+  @@schema("hr")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model employment_history {
+  id                                                  String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_id                                         String         @db.Uuid
+  department_id                                       String?        @db.Uuid
+  job_position_id                                     String?        @db.Uuid
+  manager_id                                          String?        @db.Uuid
+  employment_type                                     String?        @db.VarChar(30)
+  effective_from                                      DateTime       @db.Date
+  effective_to                                        DateTime?      @db.Date
+  reason                                              String?        @db.VarChar(255)
+  notes                                               String?
+  created_at                                          DateTime       @default(now()) @db.Timestamptz(6)
+  departments                                         departments?   @relation(fields: [department_id], references: [id], onUpdate: NoAction, map: "fk_employment_history_department")
+  employees_employment_history_employee_idToemployees employees      @relation("employment_history_employee_idToemployees", fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_employment_history_employee")
+  employees_employment_history_manager_idToemployees  employees?     @relation("employment_history_manager_idToemployees", fields: [manager_id], references: [id], onUpdate: NoAction, map: "fk_employment_history_manager")
+  job_positions                                       job_positions? @relation(fields: [job_position_id], references: [id], onUpdate: NoAction, map: "fk_employment_history_position")
+
+  @@index([effective_from, effective_to], map: "idx_employment_history_effective")
+  @@index([employee_id], map: "idx_employment_history_employee")
+  @@schema("hr")
+}
+
+model notification_reads {
+  notification_id String    @db.Uuid
+  employee_id     String    @db.Uuid
+  read_at         DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@id([notification_id, employee_id])
+  @@schema("hr")
+}
+
+model notifications {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title        String    @db.VarChar(255)
+  message      String
+  type         String?   @db.VarChar(50)
+  priority     String?   @default("NORMAL") @db.VarChar(20)
+  target_type  String    @db.VarChar(30)
+  target_id    String?   @db.Uuid
+  created_by   String?   @db.Uuid
+  published_at DateTime? @default(now()) @db.Timestamptz(6)
+  expires_at   DateTime? @db.Timestamptz(6)
+  is_active    Boolean?  @default(true)
+  created_at   DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@schema("hr")
+}
+
+model roles {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String       @unique @db.VarChar(50)
+  description String?
+  created_at  DateTime     @default(now()) @db.Timestamptz(6)
+  user_roles  user_roles[]
+
+  @@schema("identity")
+}
+
+model user_roles {
+  user_id     String   @db.Uuid
+  role_id     String   @db.Uuid
+  assigned_at DateTime @default(now()) @db.Timestamptz(6)
+  roles       roles    @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_roles_role")
+  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_roles_user")
+
+  @@id([user_id, role_id])
+  @@schema("identity")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model users {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                 String                  @unique @db.VarChar(255)
+  password_hash         String
+  status                String                  @default("ACTIVE") @db.VarChar(20)
+  last_login_at         DateTime?               @db.Timestamptz(6)
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  audit_logs            audit_logs[]
+  employees             employees?
+  user_roles            user_roles[]
+  leave_requests        leave_requests[]
+  payroll_warnings      payroll_warnings[]
+  payrun_status_history payrun_status_history[]
+  payruns               payruns[]
+
+  @@schema("identity")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model leave_allocations {
+  id                      String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_id             String           @db.Uuid
+  leave_type_id           String           @db.Uuid
+  allocation_period_start DateTime         @db.Date
+  allocation_period_end   DateTime         @db.Date
+  allocated_units         Decimal          @db.Decimal(8, 2)
+  used_units              Decimal          @default(0) @db.Decimal(8, 2)
+  remaining_units         Decimal?         @default(dbgenerated("(allocated_units - used_units)")) @db.Decimal(8, 2)
+  created_at              DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime         @default(now()) @db.Timestamptz(6)
+  employees               employees        @relation(fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_leave_allocation_employee")
+  leave_types             leave_types      @relation(fields: [leave_type_id], references: [id], onUpdate: NoAction, map: "fk_leave_allocation_type")
+  leave_requests          leave_requests[]
+
+  @@index([employee_id], map: "idx_leave_allocations_employee")
+  @@index([allocation_period_start, allocation_period_end], map: "idx_leave_allocations_period")
+  @@schema("leave_management")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model leave_requests {
+  id                String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_id       String             @db.Uuid
+  leave_type_id     String             @db.Uuid
+  allocation_id     String?            @db.Uuid
+  start_date        DateTime           @db.Date
+  end_date          DateTime           @db.Date
+  requested_units   Decimal            @db.Decimal(8, 2)
+  reason            String?
+  status            String             @default("PENDING") @db.VarChar(30)
+  approved_by       String?            @db.Uuid
+  approved_at       DateTime?          @db.Timestamptz(6)
+  rejection_reason  String?
+  created_at        DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime           @default(now()) @db.Timestamptz(6)
+  leave_allocations leave_allocations? @relation(fields: [allocation_id], references: [id], onUpdate: NoAction, map: "fk_leave_request_allocation")
+  users             users?             @relation(fields: [approved_by], references: [id], onUpdate: NoAction, map: "fk_leave_request_approver")
+  employees         employees          @relation(fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_leave_request_employee")
+  leave_types       leave_types        @relation(fields: [leave_type_id], references: [id], onUpdate: NoAction, map: "fk_leave_request_type")
+
+  @@index([start_date, end_date], map: "idx_leave_requests_dates")
+  @@index([employee_id], map: "idx_leave_requests_employee")
+  @@index([status], map: "idx_leave_requests_status")
+  @@schema("leave_management")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model leave_types {
+  id                   String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                 String              @unique @db.VarChar(100)
+  code                 String              @unique @db.VarChar(30)
+  description          String?
+  unit                 String              @default("DAYS") @db.VarChar(20)
+  is_paid              Boolean             @default(true)
+  requires_approval    Boolean             @default(true)
+  max_consecutive_days Decimal?            @db.Decimal(6, 2)
+  created_at           DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime            @default(now()) @db.Timestamptz(6)
+  leave_allocations    leave_allocations[]
+  leave_requests       leave_requests[]
+
+  @@schema("leave_management")
+}
+
+model departments {
+  id                                                   String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                                                 String               @unique(map: "uq_department_name") @db.VarChar(100)
+  code                                                 String               @unique @db.VarChar(30)
+  manager_employee_id                                  String?              @db.Uuid
+  created_at                                           DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at                                           DateTime             @default(now()) @db.Timestamptz(6)
+  employees_employees_department_idTodepartments       employees[]          @relation("employees_department_idTodepartments")
+  employment_history                                   employment_history[]
+  employees_departments_manager_employee_idToemployees employees?           @relation("departments_manager_employee_idToemployees", fields: [manager_employee_id], references: [id], onUpdate: NoAction, map: "fk_department_manager")
+  job_positions                                        job_positions[]
+
+  @@schema("organization")
+}
+
+model job_positions {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String               @db.VarChar(100)
+  description        String?
+  department_id      String               @db.Uuid
+  created_at         DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime             @default(now()) @db.Timestamptz(6)
+  employees          employees[]
+  employment_history employment_history[]
+  departments        departments          @relation(fields: [department_id], references: [id], onUpdate: NoAction, map: "fk_job_position_department")
+
+  @@unique([department_id, name], map: "uq_job_position_department_name")
+  @@schema("organization")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model payments {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payslip_id        String    @unique @db.Uuid
+  payment_reference String?   @unique @db.VarChar(150)
+  payment_date      DateTime? @db.Date
+  amount            Decimal   @db.Decimal(18, 2)
+  payment_method    String?   @db.VarChar(30)
+  status            String    @default("PENDING") @db.VarChar(30)
+  failure_reason    String?
+  created_at        DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime  @default(now()) @db.Timestamptz(6)
+  payslips          payslips  @relation(fields: [payslip_id], references: [id], onUpdate: NoAction, map: "fk_payment_payslip")
+
+  @@schema("payroll")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model payroll_warnings {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payrun_id    String     @db.Uuid
+  employee_id  String?    @db.Uuid
+  payslip_id   String?    @db.Uuid
+  severity     String     @default("WARNING") @db.VarChar(20)
+  warning_code String     @db.VarChar(100)
+  message      String
+  is_resolved  Boolean    @default(false)
+  resolved_by  String?    @db.Uuid
+  resolved_at  DateTime?  @db.Timestamptz(6)
+  created_at   DateTime   @default(now()) @db.Timestamptz(6)
+  employees    employees? @relation(fields: [employee_id], references: [id], onUpdate: NoAction, map: "fk_warning_employee")
+  payruns      payruns    @relation(fields: [payrun_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_warning_payrun")
+  payslips     payslips?  @relation(fields: [payslip_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_warning_payslip")
+  users        users?     @relation(fields: [resolved_by], references: [id], onUpdate: NoAction, map: "fk_warning_resolved_by")
+
+  @@index([employee_id], map: "idx_warnings_employee")
+  @@index([payrun_id], map: "idx_warnings_payrun")
+  @@index([is_resolved], map: "idx_warnings_unresolved", where: raw("(is_resolved = false)"))
+  @@schema("payroll")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model payrun_employees {
+  id                 String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payrun_id          String     @db.Uuid
+  employee_id        String     @db.Uuid
+  contract_id        String?    @db.Uuid
+  calculation_status String     @default("PENDING") @db.VarChar(30)
+  error_message      String?
+  created_at         DateTime   @default(now()) @db.Timestamptz(6)
+  contracts          contracts? @relation(fields: [contract_id], references: [id], onUpdate: NoAction, map: "fk_payrun_employee_contract")
+  employees          employees  @relation(fields: [employee_id], references: [id], onUpdate: NoAction, map: "fk_payrun_employee_employee")
+  payruns            payruns    @relation(fields: [payrun_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_payrun_employee_payrun")
+
+  @@unique([payrun_id, employee_id], map: "uq_payrun_employee")
+  @@index([employee_id], map: "idx_payrun_employees_employee")
+  @@index([payrun_id], map: "idx_payrun_employees_payrun")
+  @@schema("payroll")
+}
+
+model payrun_status_history {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payrun_id  String   @db.Uuid
+  old_status String?  @db.VarChar(30)
+  new_status String   @db.VarChar(30)
+  changed_by String?  @db.Uuid
+  reason     String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  payruns    payruns  @relation(fields: [payrun_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_status_history_payrun")
+  users      users?   @relation(fields: [changed_by], references: [id], onUpdate: NoAction, map: "fk_status_history_user")
+
+  @@schema("payroll")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payruns {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  run_number            String                  @unique @db.VarChar(100)
+  period_start          DateTime                @db.Date
+  period_end            DateTime                @db.Date
+  payment_date          DateTime?               @db.Date
+  status                String                  @default("DRAFT") @db.VarChar(30)
+  employee_count        Int                     @default(0)
+  total_gross           Decimal                 @default(0) @db.Decimal(18, 2)
+  total_deductions      Decimal                 @default(0) @db.Decimal(18, 2)
+  total_net             Decimal                 @default(0) @db.Decimal(18, 2)
+  created_by            String?                 @db.Uuid
+  started_at            DateTime?               @db.Timestamptz(6)
+  completed_at          DateTime?               @db.Timestamptz(6)
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  payroll_warnings      payroll_warnings[]
+  payrun_employees      payrun_employees[]
+  payrun_status_history payrun_status_history[]
+  users                 users?                  @relation(fields: [created_by], references: [id], onUpdate: NoAction, map: "fk_payrun_created_by")
+  payslips              payslips[]
+
+  @@index([period_start, period_end], map: "idx_payruns_period")
+  @@index([status], map: "idx_payruns_status")
+  @@schema("payroll")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payslip_calculation_trace {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payslip_id     String        @db.Uuid
+  step_number    Int
+  rule_id        String?       @db.Uuid
+  rule_code      String        @db.VarChar(50)
+  rule_name      String?       @db.VarChar(150)
+  input_snapshot Json?
+  base_code      String?       @db.VarChar(100)
+  base_value     Decimal?      @db.Decimal(18, 4)
+  rate           Decimal?      @db.Decimal(10, 4)
+  expression     String?
+  result         Decimal       @db.Decimal(18, 2)
+  explanation    String?
+  calculated_at  DateTime      @default(now()) @db.Timestamptz(6)
+  payslips       payslips      @relation(fields: [payslip_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_trace_payslip")
+  salary_rules   salary_rules? @relation(fields: [rule_id], references: [id], onUpdate: NoAction, map: "fk_trace_rule")
+
+  @@unique([payslip_id, step_number], map: "uq_trace_step")
+  @@index([payslip_id], map: "idx_trace_payslip")
+  @@schema("payroll")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model payslip_deliveries {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payslip_id      String    @db.Uuid
+  delivery_method String    @db.VarChar(30)
+  recipient       String?   @db.VarChar(255)
+  status          String    @default("PENDING") @db.VarChar(30)
+  sent_at         DateTime? @db.Timestamptz(6)
+  error_message   String?
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  payslips        payslips  @relation(fields: [payslip_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_delivery_payslip")
+
+  @@schema("payroll")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model payslip_inputs {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payslip_id    String    @db.Uuid
+  input_code    String    @db.VarChar(50)
+  input_name    String    @db.VarChar(150)
+  input_type    String    @db.VarChar(30)
+  numeric_value Decimal?  @db.Decimal(18, 4)
+  text_value    String?
+  boolean_value Boolean?
+  date_value    DateTime? @db.Date
+  source        String?   @db.VarChar(50)
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  payslips      payslips  @relation(fields: [payslip_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_payslip_input_payslip")
+
+  @@schema("payroll")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model payslip_lines {
+  id                     String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payslip_id             String        @db.Uuid
+  salary_rule_id         String?       @db.Uuid
+  rule_code              String        @db.VarChar(50)
+  rule_name              String        @db.VarChar(150)
+  category               String        @db.VarChar(30)
+  sequence               Int
+  base_amount            Decimal?      @default(0) @db.Decimal(18, 2)
+  rate                   Decimal?      @db.Decimal(10, 4)
+  amount                 Decimal       @db.Decimal(18, 2)
+  calculation_expression String?
+  explanation            String?
+  created_at             DateTime      @default(now()) @db.Timestamptz(6)
+  payslips               payslips      @relation(fields: [payslip_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_payslip_line_payslip")
+  salary_rules           salary_rules? @relation(fields: [salary_rule_id], references: [id], onUpdate: NoAction, map: "fk_payslip_line_rule")
+
+  @@index([payslip_id], map: "idx_payslip_lines_payslip")
+  @@index([salary_rule_id], map: "idx_payslip_lines_rule")
+  @@schema("payroll")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payslip_snapshots {
+  id                        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payslip_id                String   @unique @db.Uuid
+  employee_snapshot         Json
+  contract_snapshot         Json
+  attendance_snapshot       Json?
+  leave_snapshot            Json?
+  salary_structure_snapshot Json?
+  salary_rules_snapshot     Json?
+  created_at                DateTime @default(now()) @db.Timestamptz(6)
+
+  @@schema("payroll")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model payslip_worked_days {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payslip_id      String   @db.Uuid
+  category        String   @db.VarChar(50)
+  number_of_days  Decimal  @default(0) @db.Decimal(8, 2)
+  number_of_hours Decimal  @default(0) @db.Decimal(10, 2)
+  source          String?  @db.VarChar(50)
+  description     String?
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  payslips        payslips @relation(fields: [payslip_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_worked_days_payslip")
+
+  @@schema("payroll")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model payslips {
+  id                        String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payrun_id                 String                      @db.Uuid
+  employee_id               String                      @db.Uuid
+  contract_id               String?                     @db.Uuid
+  payslip_number            String                      @unique @db.VarChar(100)
+  period_start              DateTime                    @db.Date
+  period_end                DateTime                    @db.Date
+  currency                  String                      @default("INR") @db.Char(3)
+  gross_salary              Decimal                     @default(0) @db.Decimal(18, 2)
+  total_deductions          Decimal                     @default(0) @db.Decimal(18, 2)
+  net_salary                Decimal                     @default(0) @db.Decimal(18, 2)
+  status                    String                      @default("DRAFT") @db.VarChar(30)
+  pdf_path                  String?
+  generated_at              DateTime?                   @db.Timestamptz(6)
+  created_at                DateTime                    @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime                    @default(now()) @db.Timestamptz(6)
+  payments                  payments?
+  payroll_warnings          payroll_warnings[]
+  payslip_calculation_trace payslip_calculation_trace[]
+  payslip_deliveries        payslip_deliveries[]
+  payslip_inputs            payslip_inputs[]
+  payslip_lines             payslip_lines[]
+  payslip_worked_days       payslip_worked_days[]
+  contracts                 contracts?                  @relation(fields: [contract_id], references: [id], onUpdate: NoAction, map: "fk_payslip_contract")
+  employees                 employees                   @relation(fields: [employee_id], references: [id], onUpdate: NoAction, map: "fk_payslip_employee")
+  payruns                   payruns                     @relation(fields: [payrun_id], references: [id], onUpdate: NoAction, map: "fk_payslip_payrun")
+
+  @@index([employee_id], map: "idx_payslips_employee")
+  @@index([payrun_id], map: "idx_payslips_payrun")
+  @@index([period_start, period_end], map: "idx_payslips_period")
+  @@schema("payroll")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model salary_rule_versions {
+  id                 String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version_number     Int
+  effective_from     DateTime       @db.Date
+  effective_to       DateTime?      @db.Date
+  formula_expression String
+  description        String?
+  is_active          Boolean        @default(true)
+  created_at         DateTime       @default(now()) @db.Timestamptz(6)
+  salary_rules       salary_rules[]
+
+  @@unique([version_number, effective_from], map: "uq_rule_version")
+  @@schema("payroll_config")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model salary_rules {
+  id                        String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code                      String                      @unique @db.VarChar(50)
+  name                      String                      @db.VarChar(150)
+  category                  String                      @db.VarChar(30)
+  description               String?
+  version_id                String?                     @db.Uuid
+  is_active                 Boolean                     @default(true)
+  created_at                DateTime                    @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime                    @default(now()) @db.Timestamptz(6)
+  payslip_calculation_trace payslip_calculation_trace[]
+  payslip_lines             payslip_lines[]
+  salary_rule_versions      salary_rule_versions?       @relation(fields: [version_id], references: [id], onUpdate: NoAction, map: "fk_salary_rule_version")
+  salary_structure_rules    salary_structure_rules[]
+
+  @@index([is_active], map: "idx_salary_rules_active")
+  @@index([category], map: "idx_salary_rules_category")
+  @@schema("payroll_config")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model salary_structure_rules {
+  id                  String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  salary_structure_id String            @db.Uuid
+  salary_rule_id      String            @db.Uuid
+  sequence            Int
+  is_mandatory        Boolean           @default(false)
+  created_at          DateTime          @default(now()) @db.Timestamptz(6)
+  salary_rules        salary_rules      @relation(fields: [salary_rule_id], references: [id], onUpdate: NoAction, map: "fk_structure_rule_rule")
+  salary_structures   salary_structures @relation(fields: [salary_structure_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_structure_rule_structure")
+
+  @@unique([salary_structure_id, salary_rule_id], map: "uq_structure_rule")
+  @@unique([salary_structure_id, sequence], map: "uq_structure_sequence")
+  @@index([salary_structure_id, sequence], map: "idx_structure_rules_structure_sequence")
+  @@schema("payroll_config")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model salary_structures {
+  id                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                   String                   @unique @db.VarChar(150)
+  code                   String                   @unique @db.VarChar(50)
+  description            String?
+  currency               String                   @default("INR") @db.Char(3)
+  status                 String                   @default("ACTIVE") @db.VarChar(20)
+  created_at             DateTime                 @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime                 @default(now()) @db.Timestamptz(6)
+  contracts              contracts[]
+  salary_structure_rules salary_structure_rules[]
+
+  @@schema("payroll_config")
+}
