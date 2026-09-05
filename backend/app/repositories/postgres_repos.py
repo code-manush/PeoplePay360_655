@@ -10,7 +10,7 @@ from app.models.domain import (
     Employee, Department, JobPosition, Contract, AttendanceRecord,
     LeaveRequest, LeaveAllocation, LeaveType, Payrun, Payslip,
     Notification, NotificationRead, User, Role, UserRole, SalaryStructure,
-    SalaryRule, PayrunEmployee, PayslipLine, PayrollWarning, Payment,
+    SalaryRule, SalaryRuleVersion, SalaryStructureRule, PayrunEmployee, PayslipLine, PayrollWarning, Payment,
     AuditLog, Schedule,
 )
 
@@ -358,7 +358,71 @@ class PostgresPayrollRepository:
         return PostgresBaseRepository(SalaryRule).find_by_id(id)
 
     def find_rule_versions(self, structure_id: str) -> List[Dict[str, Any]]:
-        return []
+        with SessionLocal() as session:
+            rows = session.query(
+                SalaryStructureRule.sequence,
+                SalaryRule.code,
+                SalaryRule.name,
+                SalaryRule.category,
+                SalaryRuleVersion.formula_expression,
+                SalaryRuleVersion.id.label("version_id"),
+                SalaryRule.id.label("rule_id")
+            ).join(
+                SalaryRule, SalaryStructureRule.salary_rule_id == SalaryRule.id
+            ).join(
+                SalaryRuleVersion, SalaryRule.version_id == SalaryRuleVersion.id
+            ).filter(
+                SalaryStructureRule.salary_structure_id == structure_id
+            ).order_by(SalaryStructureRule.sequence).all()
+            
+            versions = []
+            for r in rows:
+                v = {
+                    "rule_id": str(r.rule_id),
+                    "version_id": str(r.version_id),
+                    "sequence": r.sequence,
+                    "rule_code": r.code,
+                    "rule_name": r.name,
+                    "category": r.category,
+                    "formula": r.formula_expression,
+                    # Fallback calc_type, parsing logic could go here if JSON is used
+                }
+                
+                # If formula contains JSON, parse it
+                if v["formula"].startswith("{"):
+                    try:
+                        import json
+                        data = json.loads(v["formula"])
+                        v["calculation_type"] = data.get("calculation_type", "FORMULA")
+                        v["percentage"] = data.get("percentage", 0.0)
+                        v["fixed_amount"] = data.get("fixed_amount", 0.0)
+                        v["base_code"] = data.get("base_code")
+                        v["formula"] = data.get("formula", "0")
+                    except:
+                        v["calculation_type"] = "FORMULA"
+                else:
+                    v["calculation_type"] = "FORMULA"
+                
+                versions.append(v)
+            return versions
+
+    def create_structure(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        return PostgresBaseRepository(SalaryStructure).create(data)
+
+    def update_structure(self, id: str, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        return PostgresBaseRepository(SalaryStructure).update(id, data)
+
+    def create_rule(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        return PostgresBaseRepository(SalaryRule).create(data)
+
+    def update_rule(self, id: str, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        return PostgresBaseRepository(SalaryRule).update(id, data)
+        
+    def create_rule_version(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        return PostgresBaseRepository(SalaryRuleVersion).create(data)
+
+    def add_rule_to_structure(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        return PostgresBaseRepository(SalaryStructureRule).create(data)
 
     def find_payruns(self, filters=None) -> List[Dict[str, Any]]:
         return PostgresBaseRepository(Payrun).find_all(filters)

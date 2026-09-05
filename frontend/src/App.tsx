@@ -4,6 +4,7 @@ import AppLayout from './layouts/AppLayout';
 import Dashboard from './pages/Dashboard';
 import EmployeeList from './pages/Employees/EmployeeList';
 import PayrollList from './pages/Payroll/PayrollList';
+import SalaryConfig from './pages/Payroll/SalaryConfig';
 import AttendanceList from './pages/Attendance/AttendanceList';
 import LeaveList from './pages/Leave/LeaveList';
 import ContractList from './pages/Contracts/ContractList';
@@ -38,6 +39,7 @@ function App() {
             <Route path="/attendance" element={<AttendanceList />} />
             <Route path="/leave" element={<LeaveList />} />
             <Route path="/payroll" element={<PayrollList />} />
+            <Route path="/payroll-config" element={<SalaryConfig />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/settings" element={<Settings />} />

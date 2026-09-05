@@ -19,6 +19,7 @@ from app.api.routes.schedules import router as schedules_router
 from app.api.routes.attendance import router as attendance_router
 from app.api.routes.leave import types_router, leave_router
 from app.api.routes.payroll import router as payroll_router
+from app.api.routes.payroll_config import router as payroll_config_router
 from app.api.routes.notifications import router as notifications_router
 from app.api.routes.dashboard import router as dashboard_router, stats_router
 from app.api.routes.audit import router as audit_router
@@ -85,6 +86,7 @@ app.include_router(attendance_router, prefix=API_PREFIX)
 app.include_router(types_router, prefix=API_PREFIX)
 app.include_router(leave_router, prefix=API_PREFIX)
 app.include_router(payroll_router, prefix=API_PREFIX)
+app.include_router(payroll_config_router, prefix=API_PREFIX)
 app.include_router(notifications_router, prefix=API_PREFIX)
 app.include_router(audit_router, prefix=API_PREFIX)
 

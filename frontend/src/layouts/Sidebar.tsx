@@ -23,6 +23,7 @@ const NAV_ITEMS = [
   { name: 'Attendance', path: '/attendance', icon: <Clock size={20} />, roles: ['ADMIN', 'HR', 'EMPLOYEE'] },
   { name: 'Leave', path: '/leave', icon: <Calendar size={20} />, roles: ['ADMIN', 'HR', 'EMPLOYEE'] },
   { name: 'Payroll', path: '/payroll', icon: <CreditCard size={20} />, roles: ['ADMIN', 'HR', 'EMPLOYEE'] },
+  { name: 'Payroll Config', path: '/payroll-config', icon: <CreditCard size={20} />, roles: ['ADMIN', 'HR'] },
   { name: 'Reports', path: '/reports', icon: <PieChart size={20} />, roles: ['ADMIN', 'HR'] },
   { name: 'Notifications', path: '/notifications', icon: <Bell size={20} />, roles: ['ADMIN', 'HR', 'EMPLOYEE'] },
   { name: 'Settings', path: '/settings', icon: <Settings size={20} />, roles: ['ADMIN', 'HR', 'EMPLOYEE'] },

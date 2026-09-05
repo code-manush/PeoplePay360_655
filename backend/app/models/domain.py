@@ -216,7 +216,32 @@ class SalaryRule(Base):
     name = Column(String, nullable=False)
     category = Column(String, nullable=True)
     description = Column(Text, nullable=True)
+    version_id = Column(UUID(as_uuid=False), nullable=True)
     is_active = Column(Boolean, default=True)
+
+
+class SalaryRuleVersion(Base):
+    __tablename__ = "salary_rule_versions"
+    __table_args__ = {"schema": "payroll_config"}
+    id = Column(UUID(as_uuid=False), primary_key=True)
+    version_number = Column(Integer, nullable=False)
+    effective_from = Column(Date, nullable=False)
+    effective_to = Column(Date, nullable=True)
+    formula_expression = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class SalaryStructureRule(Base):
+    __tablename__ = "salary_structure_rules"
+    __table_args__ = {"schema": "payroll_config"}
+    id = Column(UUID(as_uuid=False), primary_key=True)
+    salary_structure_id = Column(UUID(as_uuid=False), nullable=False)
+    salary_rule_id = Column(UUID(as_uuid=False), nullable=False)
+    sequence = Column(Integer, nullable=False)
+    is_mandatory = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), nullable=True)
 
 
 class Payrun(Base):
