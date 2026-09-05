@@ -1,61 +1,73 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Landing.module.css';
+import { ArrowRight, ShieldCheck, Zap, Database } from 'lucide-react';
+import { Button } from '../../components/ui/Button/Button';
 
-const Landing: React.FC = () => {
+export default function Landing() {
   const navigate = useNavigate();
+  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setCursorPos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
     <div className={styles.landingContainer}>
-      <header className={styles.header}>
-        <div className={styles.logo}>PeoplePay360</div>
-        <nav className={styles.nav}>
-          <button className={styles.signInBtn} onClick={() => navigate('/login')}>Sign In</button>
-          <button className={styles.registerBtn} onClick={() => navigate('/register')}>Get Started</button>
-        </nav>
-      </header>
-      
+      <div 
+        className={styles.cursorGlow} 
+        style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px` }} 
+      />
+      <div className={styles.topNav}>
+        <div className={styles.logo}>
+          <div className={styles.logoIcon}></div>
+          <span className={styles.logoText}>PeoplePay360</span>
+        </div>
+        <div className={styles.navActions}>
+          <Button variant="outline" onClick={() => navigate('/login')}>Sign In</Button>
+          <Button onClick={() => navigate('/register')}>Get Started</Button>
+        </div>
+      </div>
+
       <main className={styles.mainContent}>
         <div className={styles.heroSection}>
-          <span className={styles.eyebrow}>HR &amp; Payroll Platform</span>
-          <h1 className={styles.title}>People operations,<br />simplified.</h1>
-          <p className={styles.subtitle}>
-            A centralized solution to manage employee lifecycles, attendance, time off, contracts, and payroll — all in one place.
+          <div className={styles.badge}>v3.0 — The AI-Powered OS for HR</div>
+          <h1 className={styles.headline}>Manage your workforce<br/>with intelligent automation.</h1>
+          <p className={styles.description}>
+            PeoplePay360 brings payroll, attendance, leave management, and AI-driven performance analytics into a single, unified glassmorphic interface.
           </p>
-          <div className={styles.actionButtons}>
-            <button className={styles.primaryBtn} onClick={() => navigate('/register')}>
-              Get Started for Free
-            </button>
-            <button className={styles.secondaryBtn} onClick={() => navigate('/login')}>
-              Sign In to Your Account
-            </button>
+          <div className={styles.ctaGroup}>
+            <Button onClick={() => navigate('/register')} rightIcon={<ArrowRight size={18}/>} style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}>
+              Create Account
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/login')} style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}>
+              Sign In to Demo
+            </Button>
           </div>
         </div>
 
-        <div className={styles.featuresSection}>
+        <div className={styles.featureGrid}>
           <div className={styles.featureCard}>
-            <div className={styles.featureIconBox}>👥</div>
-            <h3>Unified HR Flow</h3>
-            <p>Centralized employee records with seamless navigation to Contracts, Attendance, and Time Off.</p>
+            <div className={styles.iconBox}><Zap size={24} color="var(--brand-primary)" /></div>
+            <h3>AI Analytics</h3>
+            <p>Utilize the local Qwen3 model to dynamically analyze employee performance and metrics.</p>
           </div>
           <div className={styles.featureCard}>
-            <div className={styles.featureIconBox}>📊</div>
-            <h3>Operational Tracking</h3>
-            <p>Implement flexible Working Schedules, attendance tracking, and comprehensive Time Off management.</p>
+            <div className={styles.iconBox}><Database size={24} color="var(--brand-primary)" /></div>
+            <h3>Unified Payroll</h3>
+            <p>Automated salary generation, payslips, and compliance tracking all in one database.</p>
           </div>
           <div className={styles.featureCard}>
-            <div className={styles.featureIconBox}>💳</div>
-            <h3>Payroll Processing</h3>
-            <p>Enable a two-step pay run workflow with automated salary computation and payslip generation.</p>
+            <div className={styles.iconBox}><ShieldCheck size={24} color="var(--brand-primary)" /></div>
+            <h3>Role-Based Security</h3>
+            <p>Strict access controls separating Employees, HR, and Admin privileges securely.</p>
           </div>
         </div>
       </main>
-
-      <footer className={styles.footer}>
-        <p>&copy; {new Date().getFullYear()} PeoplePay360. All rights reserved.</p>
-      </footer>
     </div>
   );
-};
-
-export default Landing;
+}

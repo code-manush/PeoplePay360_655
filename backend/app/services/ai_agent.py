@@ -112,9 +112,8 @@ def analyze_employee(employee_id: str) -> Dict[str, Any]:
         }
 
         prompt = f"""
-You are an HR AI Agent. Analyze the following employee data and generate an Employee Card.
-Provide a brief info about the employee, give them a numerical value or percentage rating,
-and suggest whether the admin should give a hike or increment to the employee along with a brief remark.
+You are an expert HR Analyst AI. Analyze the following employee data and generate an Employee Card.
+You must provide a highly unique, specific, and analytical remark based on this individual's exact metrics.
 
 Employee Name: {emp.first_name} {emp.last_name}
 
@@ -126,19 +125,18 @@ Approved Leaves: {len(approved_leaves)}
 Reasons for leaves: {[l.reason for l in approved_leaves if l.reason]}
 
 Declined Leaves: {len(declined_leaves)}
-Rejection Reasons (Tags): {[l.rejection_reason for l in declined_leaves if l.rejection_reason]}
+Rejection Reasons: {[l.rejection_reason for l in declined_leaves if l.rejection_reason]}
 
 Contract Basic Salary: {metrics["contract_salary"]}
 Recent Payslips Net Salary: {[str(p.net_salary) for p in payslips]}
 
-Format your output as a clean, structured JSON object:
+Format your output EXACTLY as this JSON object (do not include markdown block ticks, just the raw JSON):
 {{
-    "brief_info": "...",
-    "rating": "...",
-    "recommendation": "...",
-    "remark": "..."
+    "brief_info": "A 1-sentence summary of who this employee is based on the data.",
+    "rating": "A numeric percentage (e.g. 85%) rating their reliability.",
+    "recommendation": "A 3-6 word recommendation on salary increment/hike.",
+    "remark": "Write a detailed, unique, and highly personalized paragraph (exactly 30 to 50 words). Specifically reference their exact metrics (like their late averages, overtime, or leave reasons) to justify the rating. Do NOT output a generic response."
 }}
-Only return the JSON.
 """
         try:
             with httpx.Client(timeout=10.0) as client:

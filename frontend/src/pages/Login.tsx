@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './Login.module.css';
@@ -18,6 +18,15 @@ export default function Login() {
   const [password, setPassword] = useState('Anmol@Pay360');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setCursorPos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,21 +44,26 @@ export default function Login() {
 
   return (
     <div className={styles.container}>
+      <div 
+        className={styles.cursorGlow} 
+        style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px` }} 
+      />
       <div className={styles.leftPanel}>
-        <div className={styles.logo}>
-          <div className={styles.logoIcon}><span className={styles.logoShape}></span></div>
-          <h1>PeoplePay360</h1>
-        </div>
-        <div className={styles.heroContent}>
-          <h2>The complete HR & Payroll platform.</h2>
-          <p>Sign in with JWT against the peoplepay360 database. Roles: Employee &lt; HR &lt; Admin.</p>
+        <div className={styles.glassCard}>
+          <div className={styles.logo}>
+            <div className={styles.logoIcon}><span className={styles.logoShape}></span></div>
+            <h1>PeoplePay360</h1>
+          </div>
+          <div className={styles.heroContent}>
+            <h2>The complete HR platform.</h2>
+          </div>
         </div>
       </div>
       <div className={styles.rightPanel}>
         <div className={styles.loginBox}>
           <h3 className={styles.loginTitle}>Welcome back</h3>
           <p className={styles.loginSubtitle}>Use a demo account or your own credentials</p>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', marginBottom: '1.5rem' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
             <div>
               <label className="formLabel">Email</label>
               <input className="formInput" value={email} onChange={(e) => setEmail(e.target.value)} type="email" required />
@@ -59,8 +73,10 @@ export default function Login() {
               <input className="formInput" value={password} onChange={(e) => setPassword(e.target.value)} type="password" required />
             </div>
             {error && <p className="formError">{error}</p>}
-            <Button type="submit" isLoading={loading} fullWidth rightIcon={<ArrowRight size={16} />}>Sign in</Button>
+            <Button type="submit" isLoading={loading} fullWidth rightIcon={<ArrowRight size={16} />} style={{ marginTop: '0.5rem', padding: '0.6rem' }}>Sign in</Button>
           </form>
+          
+          <div className={styles.roleHeader}>Or sign in as a demo user:</div>
           <div className={styles.roleGrid}>
             {DEMOS.map((d) => (
               <button key={d.email} className={styles.roleCard} type="button" onClick={() => { setEmail(d.email); setPassword(d.hint.includes('@') ? d.hint : 'demo123'); }}>

@@ -36,13 +36,14 @@ const AIAgent: React.FC = () => {
 
   const [listLoading, setListLoading] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchEmployees = async () => {
       setListLoading(true);
       setListError(null);
       try {
-        const response: any = await apiClient.get('/employees');
+        const response: any = await apiClient.get('/employees', { params: { page_size: 500 } });
         let items: any[] = [];
         if (Array.isArray(response)) items = response;
         else if (Array.isArray(response?.data)) items = response.data;
@@ -77,6 +78,9 @@ const AIAgent: React.FC = () => {
   };
 
   const selectedEmpData = employees.find(e => e.id === selectedEmp);
+  const filteredEmployees = employees.filter(e => 
+    `${e.first_name} ${e.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className={styles.container}>
@@ -92,15 +96,27 @@ const AIAgent: React.FC = () => {
       <div className={styles.contentWrapper}>
         <div className={styles.selectCard}>
           <h3 className={styles.selectTitle}>Select Employee</h3>
+          
+          <div className={styles.searchWrapper}>
+            <input 
+              type="text" 
+              placeholder="Search by name..." 
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="formInput"
+              style={{ marginBottom: '1rem', padding: '0.4rem 0.6rem', fontSize: '0.85rem' }}
+            />
+          </div>
+
           <div className={styles.employeeList}>
             {listLoading ? (
                 <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Loading employees...</p>
             ) : listError ? (
                 <p style={{ fontSize: '0.875rem', color: 'var(--danger)' }}>{listError}</p>
-            ) : employees.length === 0 ? (
+            ) : filteredEmployees.length === 0 ? (
                 <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>No employees found.</p>
             ) : null}
-            {!listLoading && employees.map(emp => (
+            {!listLoading && filteredEmployees.map(emp => (
               <div 
                 key={emp.id}
                 className={`${styles.employeeItem} ${selectedEmp === emp.id ? styles.active : ''}`}

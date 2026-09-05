@@ -1,23 +1,53 @@
 .container {
   display: flex;
-  height: 100vh;
-  width: 100vw;
-  background-color: var(--bg-primary);
+  min-height: 100vh;
+  background: var(--bg-primary);
+  font-family: var(--font-family);
+  position: relative;
+  overflow: hidden;
+}
+
+.cursorGlow {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(77, 160, 240, 0.1) 0%, rgba(0,0,0,0) 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+  transition: transform 0.1s ease-out;
 }
 
 .leftPanel {
   flex: 1;
-  background: var(--bg-primary);
+  background: linear-gradient(135deg, #0b1a2b, #153255);
+  color: white;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+.glassCard {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 3rem;
-  border-right: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  max-width: 450px;
+  width: 100%;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
 }
 
 .logoIcon {
@@ -40,7 +70,7 @@
 .logo h1 {
   font-size: 0.9375rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #ffffff;
   letter-spacing: -0.02em;
 }
 
@@ -54,15 +84,9 @@
   font-size: 2.5rem;
   font-weight: 800;
   line-height: 1.1;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
+  color: #ffffff;
+  margin-bottom: 0;
   letter-spacing: -0.03em;
-}
-
-.heroContent p {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
 }
 
 .rightPanel {

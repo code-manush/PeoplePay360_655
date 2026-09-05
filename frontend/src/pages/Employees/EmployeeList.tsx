@@ -38,11 +38,19 @@ export default function EmployeeList() {
 
   useEffect(() => { load(); }, []);
 
-  const filtered = employees.filter(e =>
-    `${e.first_name} ${e.last_name}`.toLowerCase().includes(search.toLowerCase()) ||
-    (e.employee_code || '').toLowerCase().includes(search.toLowerCase()) ||
-    (e.email || '').toLowerCase().includes(search.toLowerCase())
-  );
+  const [departmentFilter, setDepartmentFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
+  const filtered = employees.filter(e => {
+    const matchesSearch = `${e.first_name} ${e.last_name}`.toLowerCase().includes(search.toLowerCase()) ||
+      (e.employee_code || '').toLowerCase().includes(search.toLowerCase()) ||
+      (e.email || '').toLowerCase().includes(search.toLowerCase());
+    
+    const matchesDept = departmentFilter ? e.department_id === departmentFilter : true;
+    const matchesStatus = statusFilter ? e.employment_status === statusFilter || e.status === statusFilter : true;
+
+    return matchesSearch && matchesDept && matchesStatus;
+  });
 
   function openCreate() {
     setEditingId(null);
@@ -107,6 +115,28 @@ export default function EmployeeList() {
             <Search size={18} className={styles.searchIcon} />
             <input placeholder="Search by name, email or ID..." className={styles.searchInput} value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
+          
+          <select 
+            className="formInput" 
+            style={{ width: '200px' }} 
+            value={departmentFilter} 
+            onChange={(e) => setDepartmentFilter(e.target.value)}
+          >
+            <option value="">All Departments (Branches)</option>
+            {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+          </select>
+
+          <select 
+            className="formInput" 
+            style={{ width: '150px' }} 
+            value={statusFilter} 
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">All Statuses</option>
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
+          </select>
+
           <Button variant="outline" leftIcon={<Filter size={18} />} onClick={load}>Refresh</Button>
         </div>
         <div className={styles.tableWrapper}>
