@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     DEFAULT_PAGE_SIZE: int = 20
     MAX_PAGE_SIZE: int = 500
 
-    DATABASE_URL: str = "postgresql://localhost/peoplepay"
+    DATABASE_URL: str = "postgresql://postgres:1234@localhost:5432/peoplepay360"
     JWT_SECRET: str = "peoplepay360-dev-jwt-secret-change-in-production"
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRE_MINUTES: int = 720

@@ -69,7 +69,7 @@ def health():
         "app": settings.app_name,
         "version": settings.app_version,
         "database": db_status,
-        "mode": "Aiven PostgreSQL",
+        "mode": "Local PostgreSQL",
     }
 
 

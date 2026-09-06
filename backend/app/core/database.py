@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from app.core.config import settings
 
-# Aiven PostgreSQL URI usually starts with postgres://, but SQLAlchemy requires postgresql://
+# Some hosts emit postgres://; SQLAlchemy expects postgresql://
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
     SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
