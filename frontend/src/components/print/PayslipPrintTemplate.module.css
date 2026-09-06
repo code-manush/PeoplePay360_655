@@ -1,0 +1,290 @@
+.printContainer {
+  background: white;
+  color: black;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  padding: 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.companyInfo {
+  display: flex;
+  align-items: center;
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logoShapes {
+  display: flex;
+  gap: 4px;
+}
+
+.shape1, .shape2, .shape3 {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 2px solid;
+}
+.shape1 { border-color: #e53935; border-radius: 50% 0 0 50%; }
+.shape2 { border-color: #4da0f0; }
+.shape3 { border-color: #f5c250; }
+
+.companyTitle h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  color: #333;
+}
+.companyTitle p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.payPeriodInfo {
+  text-align: right;
+}
+.payPeriodInfo p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+.payPeriodInfo h3 {
+  margin: 5px 0 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.divider {
+  border-top: 2px solid #e0e0e0;
+  margin-bottom: 24px;
+}
+
+.summarySection {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.empDetails {
+  flex: 1;
+}
+
+.sectionTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: #666;
+  margin: 0 0 16px 0;
+  letter-spacing: 0.5px;
+}
+
+.detailsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.detailsTable td {
+  padding: 6px 0;
+  font-size: 14px;
+  color: #444;
+}
+.detailsTable td:first-child {
+  width: 150px;
+  color: #666;
+}
+.detailsTable td:nth-child(2) {
+  width: 20px;
+}
+.detailsTable .bold {
+  font-weight: 600;
+  color: #000;
+}
+
+.netPayCard {
+  width: 300px;
+  background-color: #f6fdf6;
+  border: 1px solid #d4ebd4;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.netPayTop {
+  padding: 24px;
+}
+
+.netPayAmount {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 8px;
+}
+
+.netPayLabel {
+  font-size: 14px;
+  color: #2e7d32;
+}
+
+.netPayDivider {
+  border-top: 1px dashed #d4ebd4;
+  margin: 0 24px;
+}
+
+.netPayBottom {
+  padding: 16px 24px;
+}
+
+.payDays {
+  display: flex;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+.payDays:last-child {
+  margin-bottom: 0;
+}
+.payDays span:first-child { width: 100px; }
+.payDays span:nth-child(2) { width: 20px; }
+.payDays .bold { font-weight: 600; color: #000; }
+
+.pfSection {
+  display: flex;
+  gap: 60px;
+  padding: 16px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 24px;
+}
+
+.pfItem {
+  display: flex;
+  font-size: 14px;
+  color: #666;
+}
+.pfItem span:first-child { width: 130px; }
+.pfItem span:nth-child(2) { width: 20px; }
+.pfItem .bold { font-weight: 600; color: #000; }
+
+.componentsSection {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.componentsGrid {
+  display: flex;
+}
+
+.column {
+  flex: 1;
+}
+.column:first-child {
+  border-right: 1px solid #e0e0e0;
+}
+
+.compTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.compTable th {
+  text-align: left;
+  padding: 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #000;
+  border-bottom: 1px solid #eee;
+}
+
+.compTable td {
+  padding: 16px;
+  font-size: 14px;
+  color: #000;
+}
+
+.compTable .right {
+  text-align: right;
+}
+
+.compTable .bold {
+  font-weight: 600;
+}
+
+.totalsRow {
+  display: flex;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.totalCol {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #000;
+}
+.totalCol:first-child {
+  border-right: 1px solid #e0e0e0;
+}
+
+.netPayableSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f4fdf4;
+  border: 1px solid #d4ebd4;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.netPayableTitle {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+}
+
+.netPayableSub {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.netPayableAmount {
+  font-size: 24px;
+  font-weight: 700;
+  color: #000;
+}
+
+.amountInWords {
+  font-size: 14px;
+  color: #666;
+  text-align: right;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+}
+.amountInWords .bold {
+  font-weight: 600;
+  color: #000;
+}
+
+.footerNote {
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+}

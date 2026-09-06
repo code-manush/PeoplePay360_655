@@ -49,12 +49,12 @@
 
 /* Dark Mode */
 [data-theme='dark'] {
-  --bg-primary: #191919;
-  --bg-secondary: #252525;
-  --bg-hover: #2f2f2f;
-  --text-primary: #eeeeee;
-  --text-secondary: #a8a8a8;
-  --text-muted: #6b6b6b;
+  --bg-primary: #0c1220;
+  --bg-secondary: #151d2e;
+  --bg-hover: #1c2740;
+  --text-primary: #eef3fb;
+  --text-secondary: #9aabc2;
+  --text-muted: #6d7f96;
 
   --brand-primary: #4da0f0;
   --brand-primary-hover: #70b5f4;
@@ -69,9 +69,9 @@
   --danger-bg: #2e0d0d;
   --danger-text: #f47070;
 
-  --border-color: #333333;
-  --border-light: #2a2a2a;
-  --border-strong: #444444;
+  --border-color: #243044;
+  --border-light: #1b2536;
+  --border-strong: #33425a;
 }
 
 

@@ -51,15 +51,13 @@ export default function Sidebar() {
 
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.logoContainer}>
-        <div className={styles.logoIcon}>
-          <span className={styles.logoShape}></span>
-        </div>
+      <NavLink to="/" className={styles.logoContainer}>
+        <img src="/brand/logo.png" alt="PeoplePay360" className={styles.logo} />
         <div className={styles.logoText}>
           <h1 className={styles.brandName}>PeoplePay360</h1>
           <span className={styles.brandSub}>HR & Payroll</span>
         </div>
-      </div>
+      </NavLink>
 
       <nav className={styles.navMenu}>
         {filteredNavItems.map((item) => {

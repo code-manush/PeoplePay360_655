@@ -1,26 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Bell, Search, Menu, Moon, Sun } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Bell, Menu, Moon, Sun } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './Header.module.css';
 import apiClient, { unwrapList } from '../api/client';
+import { useTheme } from '../hooks/useTheme';
 
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [count, setCount] = useState(0);
-  
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    return (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
-  });
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  };
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     if (location.pathname === '/notifications') {
@@ -50,14 +39,6 @@ export default function Header() {
         <button className={styles.menuButton}>
           <Menu size={24} />
         </button>
-        <div className={styles.searchBar}>
-          <Search size={18} className={styles.searchIcon} />
-          <input
-            type="text"
-            placeholder="Search employees, payroll, reports..."
-            className={styles.searchInput}
-          />
-        </div>
       </div>
       <div className={styles.rightSection}>
         <button className={styles.iconButton} onClick={toggleTheme} title="Toggle Theme">

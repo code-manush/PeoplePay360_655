@@ -1,0 +1,177 @@
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(1100px 640px at 12% -8%, rgba(35, 131, 226, 0.16), transparent 58%),
+    radial-gradient(900px 560px at 92% 8%, rgba(135, 194, 247, 0.2), transparent 52%),
+    radial-gradient(800px 480px at 50% 110%, rgba(35, 131, 226, 0.08), transparent 55%),
+    #f5f9fd;
+}
+
+:global([data-theme='dark']) .scene {
+  background:
+    radial-gradient(1100px 640px at 12% -8%, rgba(35, 131, 226, 0.22), transparent 58%),
+    radial-gradient(900px 560px at 92% 8%, rgba(77, 160, 240, 0.14), transparent 52%),
+    radial-gradient(800px 480px at 50% 110%, rgba(20, 60, 120, 0.28), transparent 55%),
+    #0b1220;
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.auroraA,
+.auroraB,
+.auroraC {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.7;
+}
+
+.auroraA {
+  width: 42vw;
+  height: 42vw;
+  min-width: 320px;
+  top: -10%;
+  left: -8%;
+  background: radial-gradient(circle, rgba(35, 131, 226, 0.28), transparent 70%);
+  animation: driftA 18s ease-in-out infinite;
+}
+
+.auroraB {
+  width: 36vw;
+  height: 36vw;
+  min-width: 280px;
+  top: 16%;
+  right: -10%;
+  background: radial-gradient(circle, rgba(135, 194, 247, 0.34), transparent 68%);
+  animation: driftB 22s ease-in-out infinite;
+}
+
+.auroraC {
+  width: 50vw;
+  height: 28vw;
+  bottom: -14%;
+  left: 26%;
+  background: radial-gradient(circle, rgba(77, 160, 240, 0.18), transparent 70%);
+  animation: driftC 26s ease-in-out infinite;
+}
+
+:global([data-theme='dark']) .auroraA {
+  background: radial-gradient(circle, rgba(35, 131, 226, 0.38), transparent 70%);
+}
+
+:global([data-theme='dark']) .auroraB {
+  background: radial-gradient(circle, rgba(77, 160, 240, 0.22), transparent 68%);
+}
+
+.rings {
+  position: absolute;
+  width: min(760px, 72vw);
+  height: min(760px, 72vw);
+  top: 8%;
+  left: 50%;
+  translate: -50% 0;
+  border-radius: 50%;
+  border: 1px solid rgba(35, 131, 226, 0.12);
+  box-shadow:
+    0 0 0 80px rgba(35, 131, 226, 0.03),
+    inset 0 0 80px rgba(35, 131, 226, 0.04);
+  animation: spin 90s linear infinite;
+}
+
+.rings::before,
+.rings::after {
+  content: '';
+  position: absolute;
+  inset: 14%;
+  border-radius: 50%;
+  border: 1px solid rgba(35, 131, 226, 0.08);
+}
+
+.rings::after {
+  inset: 28%;
+  border-color: rgba(35, 131, 226, 0.12);
+}
+
+:global([data-theme='dark']) .rings {
+  border-color: rgba(135, 194, 247, 0.12);
+  box-shadow:
+    0 0 0 80px rgba(35, 131, 226, 0.04),
+    inset 0 0 80px rgba(35, 131, 226, 0.05);
+}
+
+.cursorLight {
+  position: fixed;
+  width: 640px;
+  height: 640px;
+  left: var(--mx, 50vw);
+  top: var(--my, 32vh);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(35, 131, 226, 0.14) 0%, transparent 64%);
+  transition: left 0.12s linear, top 0.12s linear;
+}
+
+:global([data-theme='dark']) .cursorLight {
+  background: radial-gradient(circle, rgba(77, 160, 240, 0.16) 0%, transparent 64%);
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 46%, rgba(245, 249, 253, 0.55) 100%);
+}
+
+:global([data-theme='dark']) .vignette {
+  background: radial-gradient(ellipse at center, transparent 42%, rgba(11, 18, 32, 0.72) 100%);
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  mix-blend-mode: overlay;
+}
+
+@keyframes driftA {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(36px, 28px) scale(1.08); }
+}
+
+@keyframes driftB {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-44px, 36px) scale(1.1); }
+}
+
+@keyframes driftC {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-24px, -36px); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .rings {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auroraA,
+  .auroraB,
+  .auroraC,
+  .rings {
+    animation: none;
+  }
+}
