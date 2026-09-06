@@ -9,10 +9,11 @@ import Modal from '../../components/ui/Modal/Modal';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function LeaveList() {
-  const { role } = useAuth();
+  const { role, employee } = useAuth();
   const isHr = role === 'HR' || role === 'ADMIN';
   const [requests, setRequests] = useState<any[]>([]);
   const [types, setTypes] = useState<any[]>([]);
+  const [allocations, setAllocations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(false);
@@ -24,13 +25,15 @@ export default function LeaveList() {
   async function load() {
     setLoading(true);
     try {
-      const [reqRes, typeRes] = await Promise.all([
+      const [reqRes, typeRes, allocRes] = await Promise.all([
         apiClient.get('/leave/requests', { params: { page_size: 200 } }),
         apiClient.get('/time-off/types'),
+        apiClient.get('/leave/allocations', { params: employee?.id ? { employee_id: employee.id } : { employee_id: '__none__' } }),
       ]);
       setRequests(unwrapList(reqRes));
       const loadedTypes = unwrapList(typeRes);
       setTypes(loadedTypes);
+      setAllocations(unwrapList(allocRes));
       setForm((prev) => prev.time_off_type_id || !loadedTypes[0] ? prev : { ...prev, time_off_type_id: loadedTypes[0].id });
     } catch (err: any) {
       setError(err.message);
@@ -98,6 +101,20 @@ export default function LeaveList() {
           <Button leftIcon={<Plus size={18} />} onClick={() => setOpen(true)}>Request Leave</Button>
         </div>
       </div>
+
+      {allocations.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+          {allocations.map((a) => (
+            <Card key={a.id}>
+              <div style={{ padding: '1rem' }}>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{a.time_off_type?.name || 'Leave'}</p>
+                <p style={{ fontWeight: 700 }}>{a.remaining_units ?? ((a.allocated_units || 0) - (a.used_units || 0))} remaining</p>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{a.used_units || 0} used of {a.allocated_units || 0}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <Card className={styles.tableCard}>
         <div className={styles.toolbar}>

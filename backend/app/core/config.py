@@ -12,7 +12,10 @@ class Settings(BaseSettings):
     DEBUG: bool = True
 
     API_PREFIX: str = "/api"
-    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000"
+    CORS_ORIGINS: str = (
+        "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,"
+        "http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175,http://127.0.0.1:3000"
+    )
 
     CONTRACT_EXPIRY_WARNING_DAYS: str = "90,60,30,7"
     CURRENCY: str = "INR"
@@ -34,7 +37,14 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> List[str]:
-        return [o.strip() for o in self.CORS_ORIGINS.split(",")]
+        origins = [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
+        extras: List[str] = []
+        for origin in origins:
+            if "://localhost" in origin:
+                extras.append(origin.replace("://localhost", "://127.0.0.1", 1))
+            elif "://127.0.0.1" in origin:
+                extras.append(origin.replace("://127.0.0.1", "://localhost", 1))
+        return list(dict.fromkeys(origins + extras))
 
     @property
     def expiry_warning_days(self) -> List[int]:

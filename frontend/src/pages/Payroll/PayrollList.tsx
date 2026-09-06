@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Card } from '../../components/ui/Card/Card';
 import { Badge } from '../../components/ui/Badge/Badge';
 import { Button } from '../../components/ui/Button/Button';
-import apiClient, { unwrapList, unwrapData } from '../../api/client';
-import styles from './PayrollList.module.css';
-import { Plus, Search, Filter, FileText, CheckCircle, PlayCircle } from 'lucide-react';
+import { Plus, Search, Filter, FileText, CheckCircle, PlayCircle, Download } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Modal from '../../components/ui/Modal/Modal';
+import apiClient, { unwrapList, unwrapData, downloadPayslipPdf } from '../../api/client';
+import styles from './PayrollList.module.css';
 
 export default function PayrollList() {
   const { role } = useAuth();
@@ -17,8 +17,10 @@ export default function PayrollList() {
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(false);
   const [detail, setDetail] = useState<any | null>(null);
+  const [payslipDetail, setPayslipDetail] = useState<any | null>(null);
   const [error, setError] = useState('');
-  const [form, setForm] = useState({ period_start: '', period_end: '' });
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({ period_start: '', period_end: '', include: 'sample' });
 
   async function load() {
     setLoading(true);
@@ -30,8 +32,9 @@ export default function PayrollList() {
         const response = await apiClient.get('/payroll/payslips', { params: { page_size: 50 } });
         setPayslips(unwrapList(response));
       }
-    } catch (err) {
-      console.error('Failed to load payroll', err);
+      setError('');
+    } catch (err: any) {
+      setError(err.message || 'Failed to load payroll');
     } finally {
       setLoading(false);
     }
@@ -46,13 +49,16 @@ export default function PayrollList() {
 
   async function createPayrun() {
     setError('');
+    setSaving(true);
     try {
       await apiClient.post('/payroll/payruns', form);
       setOpen(false);
-      setForm({ period_start: '', period_end: '' });
-      load();
+      setForm({ period_start: '', period_end: '', include: 'sample' });
+      await load();
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -69,6 +75,19 @@ export default function PayrollList() {
   async function viewDetails(id: string) {
     const res = await apiClient.get(`/payroll/payruns/${id}`);
     setDetail(unwrapData(res));
+  }
+
+  async function viewPayslip(id: string) {
+    const res = await apiClient.get(`/payroll/payslips/${id}`);
+    setPayslipDetail(unwrapData(res));
+  }
+
+  async function downloadPdf(id: string, number?: string) {
+    try {
+      await downloadPayslipPdf(id, `${number || 'payslip'}.pdf`);
+    } catch (err: any) {
+      setError(err.message);
+    }
   }
 
   const filteredRuns = payruns.filter((pr) =>
@@ -166,20 +185,27 @@ export default function PayrollList() {
                   <th>Gross</th>
                   <th>Net</th>
                   <th>Status</th>
+                  <th className={styles.actionsCell}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={5} className={styles.loadingCell}>Loading payslips...</td></tr>
+                  <tr><td colSpan={6} className={styles.loadingCell}>Loading payslips...</td></tr>
                 ) : payslips.length === 0 ? (
-                  <tr><td colSpan={5} className={styles.emptyCell}>No payslips found.</td></tr>
+                  <tr><td colSpan={6} className={styles.emptyCell}>No payslips found.</td></tr>
                 ) : payslips.filter((p) => `${p.payslip_number || ''} ${p.period_start || ''}`.toLowerCase().includes(search.toLowerCase())).map((p) => (
                   <tr key={p.id}>
                     <td>{p.payslip_number || p.id.slice(0, 8)}</td>
                     <td>{p.period_start} – {p.period_end}</td>
                     <td className={styles.currency}>{formatCurrency(p.gross ?? p.gross_salary)}</td>
                     <td className={styles.currency}>{formatCurrency(p.net ?? p.net_salary)}</td>
-                    <td><Badge variant={p.status === 'PAID' ? 'success' : 'default'}>{p.status}</Badge></td>
+                    <td><Badge variant={p.status === 'PAID' ? 'success' : p.status === 'CALCULATED' || p.status === 'VALIDATED' ? 'warning' : 'default'}>{p.status}</Badge></td>
+                    <td className={styles.actionsCell}>
+                      <div className={styles.actionButtons}>
+                        <button className={styles.iconButton} title="View" onClick={() => viewPayslip(p.id)}><FileText size={16} /></button>
+                        <button className={styles.iconButton} title="Download PDF" onClick={() => downloadPdf(p.id, p.payslip_number)}><Download size={16} /></button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -189,9 +215,17 @@ export default function PayrollList() {
       </Card>
 
       {open && (
-        <Modal title="New payrun" onClose={() => setOpen(false)} footer={<><Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button><Button onClick={createPayrun}>Create draft</Button></>}>
+        <Modal title="New payrun" onClose={() => !saving && setOpen(false)} footer={<><Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>Cancel</Button><Button onClick={createPayrun} disabled={saving}>{saving ? 'Creating…' : 'Create draft'}</Button></>}>
           <div><label className="formLabel">Period start</label><input className="formInput" type="date" value={form.period_start} onChange={(e) => setForm({ ...form, period_start: e.target.value })} /></div>
           <div><label className="formLabel">Period end</label><input className="formInput" type="date" value={form.period_end} onChange={(e) => setForm({ ...form, period_end: e.target.value })} /></div>
+          <div>
+            <label className="formLabel">Employees</label>
+            <select className="formInput" value={form.include} onChange={(e) => setForm({ ...form, include: e.target.value })}>
+              <option value="sample">Sample of 5 people with attendance (recommended)</option>
+              <option value="attendance">Everyone with attendance in this period</option>
+              <option value="all">All active employees</option>
+            </select>
+          </div>
           {error && <p className="formError">{error}</p>}
         </Modal>
       )}
@@ -202,8 +236,33 @@ export default function PayrollList() {
           <p><strong>Period:</strong> {detail.period_start} – {detail.period_end}</p>
           <p><strong>Employees:</strong> {detail.employee_count || detail.total_employees || 0}</p>
           <p><strong>Total net:</strong> {formatCurrency(detail.total_net)}</p>
-          <p><strong>Payslips:</strong> {(detail.payslips || []).length}</p>
           {(detail.warnings || []).length > 0 && <p><strong>Warnings:</strong> {detail.warnings.length}</p>}
+          <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {(detail.payslips || []).map((p: any) => (
+              <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem' }}>
+                <span>{p.employee?.first_name} {p.employee?.last_name} — {formatCurrency(p.net ?? p.net_salary)}</span>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <Button size="sm" variant="outline" onClick={() => viewPayslip(p.id)}>Lines</Button>
+                  <Button size="sm" variant="outline" onClick={() => downloadPdf(p.id, p.payslip_number)}>PDF</Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Modal>
+      )}
+
+      {payslipDetail && (
+        <Modal title={`Payslip ${payslipDetail.payslip_number || ''}`} onClose={() => setPayslipDetail(null)} footer={<><Button variant="outline" onClick={() => downloadPdf(payslipDetail.id, payslipDetail.payslip_number)}>Download PDF</Button><Button onClick={() => setPayslipDetail(null)}>Close</Button></>}>
+          <p><strong>Employee:</strong> {payslipDetail.employee?.first_name} {payslipDetail.employee?.last_name}</p>
+          <p><strong>Period:</strong> {payslipDetail.period_start} – {payslipDetail.period_end}</p>
+          <p><strong>Gross:</strong> {formatCurrency(payslipDetail.gross ?? payslipDetail.gross_salary)}</p>
+          <p><strong>Deductions:</strong> {formatCurrency(payslipDetail.total_deductions)}</p>
+          <p><strong>Net:</strong> {formatCurrency(payslipDetail.net ?? payslipDetail.net_salary)}</p>
+          <div style={{ marginTop: '1rem' }}>
+            {(payslipDetail.lines || []).map((line: any) => (
+              <p key={line.id}>{line.rule_name || line.rule_code}: {formatCurrency(line.amount ?? line.computed_amount)}</p>
+            ))}
+          </div>
         </Modal>
       )}
     </div>

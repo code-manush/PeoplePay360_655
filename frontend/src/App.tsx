@@ -15,12 +15,23 @@ import Login from './pages/Login';
 import Landing from './pages/Landing/Landing';
 import Register from './pages/Register/Register';
 import AIAgent from './pages/AIAgent/AIAgent';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import Organization from './pages/Organization/Organization';
+import ScheduleList from './pages/Schedules/ScheduleList';
+import AuditLogs from './pages/Audit/AuditLogs';
+import { AuthProvider, useAuth, type Role } from './contexts/AuthContext';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { role, token } = useAuth();
   if (!role || !token) {
     return <Navigate to="/landing" replace />;
+  }
+  return <>{children}</>;
+}
+
+function RoleRoute({ roles, children }: { roles: Role[]; children: React.ReactNode }) {
+  const { role } = useAuth();
+  if (!role || !roles.includes(role)) {
+    return <Navigate to="/" replace />;
   }
   return <>{children}</>;
 }
@@ -35,16 +46,19 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/employees" element={<EmployeeList />} />
-            <Route path="/contracts" element={<ContractList />} />
+            <Route path="/employees" element={<RoleRoute roles={['ADMIN', 'HR']}><EmployeeList /></RoleRoute>} />
+            <Route path="/organization" element={<RoleRoute roles={['ADMIN', 'HR']}><Organization /></RoleRoute>} />
+            <Route path="/contracts" element={<RoleRoute roles={['ADMIN', 'HR']}><ContractList /></RoleRoute>} />
+            <Route path="/schedules" element={<RoleRoute roles={['ADMIN', 'HR']}><ScheduleList /></RoleRoute>} />
             <Route path="/attendance" element={<AttendanceList />} />
             <Route path="/leave" element={<LeaveList />} />
             <Route path="/payroll" element={<PayrollList />} />
-            <Route path="/payroll-config" element={<SalaryConfig />} />
-            <Route path="/reports" element={<Reports />} />
+            <Route path="/payroll-config" element={<RoleRoute roles={['ADMIN', 'HR']}><SalaryConfig /></RoleRoute>} />
+            <Route path="/reports" element={<RoleRoute roles={['ADMIN', 'HR']}><Reports /></RoleRoute>} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/audit" element={<RoleRoute roles={['ADMIN', 'HR']}><AuditLogs /></RoleRoute>} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/ai-agent" element={<AIAgent />} />
+            <Route path="/ai-agent" element={<RoleRoute roles={['ADMIN', 'HR']}><AIAgent /></RoleRoute>} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

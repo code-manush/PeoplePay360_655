@@ -14,18 +14,24 @@ export default function ContractList() {
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(false);
   const [error, setError] = useState('');
-  const [form, setForm] = useState({ employee_id: '', start_date: '', end_date: '', wage: '', contract_type: 'FULL_TIME' });
+  const [form, setForm] = useState({ employee_id: '', start_date: '', end_date: '', wage: '', contract_type: 'FULL_TIME', salary_structure_id: '', schedule_id: '' });
+  const [structures, setStructures] = useState<any[]>([]);
+  const [schedules, setSchedules] = useState<any[]>([]);
 
   async function load() {
     setLoading(true);
     try {
-      const [cRes, eRes] = await Promise.all([
+      const [cRes, eRes, sRes, schRes] = await Promise.all([
         apiClient.get('/contracts', { params: { page_size: 500 } }),
         apiClient.get('/employees', { params: { page_size: 500 } }),
+        apiClient.get('/payroll/salary-structures'),
+        apiClient.get('/schedules'),
       ]);
       setError('');
       setContracts(unwrapList(cRes));
       setEmployees(unwrapList(eRes));
+      setStructures(unwrapList(sRes));
+      setSchedules(unwrapList(schRes));
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -120,6 +126,20 @@ export default function ContractList() {
           <div><label className="formLabel">Start date</label><input className="formInput" type="date" value={form.start_date} onChange={(e) => setForm({ ...form, start_date: e.target.value })} /></div>
           <div><label className="formLabel">End date</label><input className="formInput" type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} /></div>
           <div><label className="formLabel">Monthly wage</label><input className="formInput" type="number" value={form.wage} onChange={(e) => setForm({ ...form, wage: e.target.value })} /></div>
+          <div>
+            <label className="formLabel">Salary structure</label>
+            <select className="formInput" value={form.salary_structure_id} onChange={(e) => setForm({ ...form, salary_structure_id: e.target.value })}>
+              <option value="">Select structure</option>
+              {structures.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="formLabel">Work schedule</label>
+            <select className="formInput" value={form.schedule_id} onChange={(e) => setForm({ ...form, schedule_id: e.target.value })}>
+              <option value="">Default weekdays</option>
+              {schedules.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+          </div>
           {error && <p className="formError">{error}</p>}
         </Modal>
       )}

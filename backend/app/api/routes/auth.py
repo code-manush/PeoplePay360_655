@@ -6,12 +6,13 @@ from app.core.security import (
     verify_password, create_access_token, normalize_app_role, hash_password,
 )
 from app.core.config import settings
-from app.repositories.postgres_repos import PostgresUserRepository, PostgresEmployeeRepository
+from app.repositories.postgres_repos import PostgresUserRepository, PostgresEmployeeRepository, PostgresLeaveRepository
 from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 user_repo = PostgresUserRepository()
 emp_repo = PostgresEmployeeRepository()
+leave_repo = PostgresLeaveRepository()
 
 
 @router.post("/login")
@@ -76,6 +77,7 @@ def register(body: dict):
             "joining_date": datetime.now(timezone.utc).date()
         }
         employee = emp_repo.create(emp_data)
+        leave_repo.ensure_default_allocations(employee["id"])
         
         return success_response({
             "user": user,

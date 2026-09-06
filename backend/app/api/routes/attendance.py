@@ -274,7 +274,7 @@ def correct_attendance(att_id: str, body: dict, current: dict = Depends(get_curr
         "notes": body["correction_reason"],
         "status": body.get("status") or record.get("status") or "PRESENT",
     })
-    audit_service.log("ATTENDANCE_CORRECTED", "ATTENDANCE", att_id,
+    audit_service.log_for(current, "ATTENDANCE_CORRECTED", "ATTENDANCE", att_id,
                       description=f"Attendance corrected. Reason: {body['correction_reason']}")
     return success_response(updated, "Attendance corrected")
 

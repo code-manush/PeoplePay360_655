@@ -12,7 +12,10 @@ import {
   Settings,
   LogOut,
   Bell,
-  BrainCircuit
+  BrainCircuit,
+  Building2,
+  CalendarClock,
+  ScrollText
 } from 'lucide-react';
 import styles from './Sidebar.module.css';
 import { clsx } from 'clsx';
@@ -20,7 +23,9 @@ import { clsx } from 'clsx';
 const NAV_ITEMS = [
   { name: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} />, roles: ['ADMIN', 'HR', 'EMPLOYEE'] },
   { name: 'Employees', path: '/employees', icon: <Users size={20} />, roles: ['ADMIN', 'HR'] },
+  { name: 'Organization', path: '/organization', icon: <Building2 size={20} />, roles: ['ADMIN', 'HR'] },
   { name: 'Contracts', path: '/contracts', icon: <FileSignature size={20} />, roles: ['ADMIN', 'HR'] },
+  { name: 'Schedules', path: '/schedules', icon: <CalendarClock size={20} />, roles: ['ADMIN', 'HR'] },
   { name: 'Attendance', path: '/attendance', icon: <Clock size={20} />, roles: ['ADMIN', 'HR', 'EMPLOYEE'] },
   { name: 'Leave', path: '/leave', icon: <Calendar size={20} />, roles: ['ADMIN', 'HR', 'EMPLOYEE'] },
   { name: 'Payroll', path: '/payroll', icon: <CreditCard size={20} />, roles: ['ADMIN', 'HR', 'EMPLOYEE'] },
@@ -28,6 +33,7 @@ const NAV_ITEMS = [
   { name: 'Reports', path: '/reports', icon: <PieChart size={20} />, roles: ['ADMIN', 'HR'] },
   { name: 'AI Analysis', path: '/ai-agent', icon: <BrainCircuit size={20} />, roles: ['ADMIN', 'HR'] },
   { name: 'Notifications', path: '/notifications', icon: <Bell size={20} />, roles: ['ADMIN', 'HR', 'EMPLOYEE'] },
+  { name: 'Audit', path: '/audit', icon: <ScrollText size={20} />, roles: ['ADMIN', 'HR'] },
   { name: 'Settings', path: '/settings', icon: <Settings size={20} />, roles: ['ADMIN', 'HR', 'EMPLOYEE'] },
 ];
 

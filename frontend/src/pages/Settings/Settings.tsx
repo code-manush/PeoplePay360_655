@@ -1,9 +1,19 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card/Card';
 import { useAuth } from '../../contexts/AuthContext';
+import apiClient, { unwrapData } from '../../api/client';
 
 export default function Settings() {
   const { user, employee, role } = useAuth();
+  const [me, setMe] = useState<any>(null);
+
+  useEffect(() => {
+    apiClient.get('/auth/me').then((res) => setMe(unwrapData(res))).catch(() => setMe(null));
+  }, []);
+
+  const emp = me?.employee || employee;
+  const session = me?.user || user;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <div>
@@ -14,9 +24,12 @@ export default function Settings() {
         <CardHeader><CardTitle>Session</CardTitle></CardHeader>
         <CardContent>
           <p><strong>Role:</strong> {role}</p>
-          <p><strong>Email:</strong> {user?.email}</p>
-          <p><strong>Employee:</strong> {employee ? `${employee.first_name} ${employee.last_name} (${employee.employee_code})` : '—'}</p>
-          <p style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>Hierarchy: EMPLOYEE &lt; HR &lt; ADMIN. Demo password for all seeded users is demo123.</p>
+          <p><strong>Email:</strong> {session?.email}</p>
+          <p><strong>Employee:</strong> {emp ? `${emp.first_name} ${emp.last_name} (${emp.employee_code})` : '—'}</p>
+          <p><strong>Department:</strong> {emp?.department?.name || emp?.department_id || '—'}</p>
+          <p style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>
+            Hierarchy: EMPLOYEE &lt; HR &lt; ADMIN. HR can manage organization, schedules, payroll config, and audit from the sidebar.
+          </p>
         </CardContent>
       </Card>
     </div>

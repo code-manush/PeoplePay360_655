@@ -27,20 +27,6 @@ def validate_pre_compute(
     emp_id = employee["id"]
     emp_name = f"{employee['first_name']} {employee['last_name']} ({employee['employee_code']})"
 
-    # Missing bank details
-    if not bank_account:
-        warnings.append({
-            "code": "MISSING_BANK_DETAILS",
-            "severity": "WARNING",
-            "message": f"{emp_name} does not have verified bank details. Payment cannot be processed.",
-            "employee_id": emp_id,
-            "payrun_id": None,
-            "payslip_id": None,
-            "is_resolved": False,
-            "resolved_by": None,
-            "resolved_at": None,
-        })
-
     # Duplicate payslip check
     for ps in existing_payslips:
         if (ps["employee_id"] == emp_id and
@@ -63,11 +49,11 @@ def validate_pre_compute(
     if contract:
         end_date_str = contract.get("end_date")
         if end_date_str:
-            end_date = date.fromisoformat(end_date_str)
+            end_date = date.fromisoformat(str(end_date_str)[:10])
             today = date.today()
             days_remaining = (end_date - today).days
             if days_remaining <= 90:
-                severity = "BLOCKER" if days_remaining <= 7 else ("ERROR" if days_remaining <= 30 else "WARNING")
+                severity = "CRITICAL" if days_remaining <= 7 else ("ERROR" if days_remaining <= 30 else "WARNING")
                 warnings.append({
                     "code": "CONTRACT_EXPIRING",
                     "severity": severity,

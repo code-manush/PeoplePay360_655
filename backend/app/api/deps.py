@@ -54,6 +54,9 @@ def require_role(*roles: str):
 def require_min_role(minimum: str):
     def checker(current: dict = Depends(get_current_user)) -> dict:
         if not role_at_least(current.get("role"), minimum):
-            raise HTTPException(status_code=403, detail=error_response("FORBIDDEN", "Insufficient role"))
+            raise HTTPException(
+                status_code=403,
+                detail=error_response("FORBIDDEN", "This section is available to HR and Admin only."),
+            )
         return current
     return checker

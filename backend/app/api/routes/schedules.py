@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from app.repositories.postgres_repos import PostgresScheduleRepository
 from app.core.response import success_response, error_response
+from app.api.deps import get_current_user, require_min_role
 
 router = APIRouter(prefix="/schedules", tags=["schedules"])
 schedule_repo = PostgresScheduleRepository()
@@ -21,7 +22,7 @@ def _enrich_schedule(s: dict) -> dict:
 
 
 @router.get("")
-def list_schedules():
+def list_schedules(current: dict = Depends(get_current_user)):
     schedules = schedule_repo.find_all()
     return success_response([_enrich_schedule(s) for s in schedules])
 
@@ -35,7 +36,7 @@ def get_schedule(schedule_id: str):
 
 
 @router.post("")
-def create_schedule(body: dict):
+def create_schedule(body: dict, current: dict = Depends(require_min_role("HR"))):
     if not body.get("name"):
         raise HTTPException(status_code=422, detail=error_response("VALIDATION_ERROR", "Name is required"))
     days = body.pop("days", [])

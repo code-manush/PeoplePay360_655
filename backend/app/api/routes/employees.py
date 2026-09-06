@@ -5,7 +5,8 @@ from app.repositories.postgres_repos import (
     PostgresJobPositionRepository, PostgresContractRepository,
     PostgresAttendanceRepository, PostgresLeaveRepository,
     PostgresPayrollRepository, PostgresNotificationRepository,
-    PostgresBankAccountRepository, PostgresUserRepository
+    PostgresBankAccountRepository, PostgresUserRepository,
+    PostgresEmploymentHistoryRepository, PostgresScheduleRepository
 )
 from app.core.response import success_response, paginated_response, error_response
 from app.core.exceptions import NotFoundException
@@ -26,6 +27,8 @@ payroll_repo = PostgresPayrollRepository()
 notif_repo = PostgresNotificationRepository()
 bank_repo = PostgresBankAccountRepository()
 user_repo = PostgresUserRepository()
+history_repo = PostgresEmploymentHistoryRepository()
+schedule_repo = PostgresScheduleRepository()
 
 
 def _lookup_maps():
@@ -114,7 +117,11 @@ def create_employee(body: dict, current: dict = Depends(require_min_role("HR")))
         "employment_status": body.get("employment_status", "ACTIVE"),
         "is_active": True,
     })
-    audit_service.log("EMPLOYEE_CREATED", "EMPLOYEE", emp["id"],
+    leave_repo.ensure_default_allocations(emp["id"])
+    history_repo.record_change(emp, "HIRE")
+    if body.get("schedule_id"):
+        schedule_repo.assign_employee(emp["id"], body["schedule_id"], emp.get("joining_date"))
+    audit_service.log_for(current, "EMPLOYEE_CREATED", "EMPLOYEE", emp["id"],
                       description=f"Employee {emp.get('first_name')} {emp.get('last_name')} created")
     return success_response(emp, "Employee created successfully")
 
@@ -125,8 +132,13 @@ def update_employee(employee_id: str, body: dict, current: dict = Depends(requir
     if not emp:
         raise HTTPException(status_code=404, detail=error_response("NOT_FOUND", f"Employee {employee_id} not found"))
     updated = emp_repo.update(employee_id, body)
-    audit_service.log("EMPLOYEE_UPDATED", "EMPLOYEE", employee_id,
-                      description=f"Employee {employee_id} updated")
+    if updated:
+        history_repo.record_change(updated, "UPDATE")
+        if body.get("schedule_id"):
+            schedule_repo.assign_employee(employee_id, body["schedule_id"])
+    name = f"{(updated or emp).get('first_name')} {(updated or emp).get('last_name')}".strip()
+    audit_service.log_for(current, "EMPLOYEE_UPDATED", "EMPLOYEE", employee_id,
+                      description=f"Employee {name or employee_id} updated")
     return success_response(updated)
 
 
@@ -139,6 +151,14 @@ def deactivate_employee(employee_id: str, current: dict = Depends(require_min_ro
     if emp.get("user_id"):
         user_repo.set_status(emp["user_id"], "INACTIVE")
     return success_response(updated, "Employee deactivated")
+
+
+@router.get("/{employee_id}/history")
+def get_employee_history(employee_id: str):
+    emp = emp_repo.find_by_id(employee_id)
+    if not emp:
+        raise HTTPException(status_code=404, detail=error_response("NOT_FOUND", f"Employee {employee_id} not found"))
+    return success_response(history_repo.find_all({"employee_id": employee_id}))
 
 
 @router.get("/{employee_id}/contracts")

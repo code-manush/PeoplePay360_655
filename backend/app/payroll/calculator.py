@@ -14,17 +14,17 @@ DAY_OF_WEEK_MAP = {
     "THURSDAY": 3, "FRIDAY": 4, "SATURDAY": 5, "SUNDAY": 6,
 }
 
-DEDUCTION_CODES = {"PF_EMP", "PT", "TDS"}
-
 
 def _count_working_days(start: date, end: date, schedule_days: List[Dict]) -> int:
     """Count working days in a period based on schedule."""
     working_weekdays = set()
-    for day in schedule_days:
+    for day in schedule_days or []:
         if day.get("is_working"):
             dow = DAY_OF_WEEK_MAP.get(day["day_of_week"], -1)
             if dow >= 0:
                 working_weekdays.add(dow)
+    if not working_weekdays:
+        working_weekdays = {0, 1, 2, 3, 4}
 
     count = 0
     current = start
@@ -99,7 +99,7 @@ def calculate_payslip(ctx: PayrollContext) -> Tuple[Dict, CalculationTrace, List
         ctx.period_end,
         ctx.total_working_days,
     )
-    ctx.worked_days = min(worked_effective, float(ctx.total_working_days))
+    ctx.worked_days = min(worked_effective, float(ctx.total_working_days)) if ctx.total_working_days else worked_effective
     ctx.paid_leave_days = paid_leave
     ctx.unpaid_leave_days = unpaid_leave
     ctx.overtime_hours = overtime_hours
@@ -193,45 +193,38 @@ def calculate_payslip(ctx: PayrollContext) -> Tuple[Dict, CalculationTrace, List
             pf_employer = computed
 
         line = {
-            "payslip_id": None,  # set later
+            "payslip_id": None,
+            "salary_rule_id": rule_id,
             "rule_id": rule_id,
             "rule_code": rule_code,
             "rule_name": rule_name,
             "category": category,
             "sequence": rv.get("sequence", seq_idx * 10),
             "base_amount": round(base_value, 2) if base_value is not None else None,
+            "rate": percentage,
             "percentage": percentage,
-            "computed_amount": round(computed if category not in DEDUCTION_CODES else -abs(computed), 2),
-            "explanation": explanation,
+            "amount": round(abs(computed), 2),
+            "computed_amount": round(abs(computed), 2),
+            "calculation_expression": formula,
+            "explanation": explanation or f"{rule_code} = {computed:.2f}",
         }
         lines.append(line)
 
     total_deductions = pf_emp + pt_val
 
     payslip = {
-        "payrun_id": None,  # set by caller
+        "payrun_id": None,
         "employee_id": ctx.employee["id"],
         "contract_id": ctx.contract["id"],
         "period_start": ctx.period_start.isoformat(),
         "period_end": ctx.period_end.isoformat(),
-        "status": "COMPUTED",
-        "worked_days": round(ctx.worked_days, 2),
-        "total_working_days": ctx.total_working_days,
-        "paid_leave_days": round(ctx.paid_leave_days, 2),
-        "unpaid_leave_days": round(ctx.unpaid_leave_days, 2),
-        "overtime_hours": round(ctx.overtime_hours, 2),
-        "basic": round(basic, 2),
-        "hra": round(hra, 2),
-        "transport": round(transport, 2),
-        "overtime_pay": round(overtime_pay, 2),
+        "status": "CALCULATED",
         "gross": round(gross, 2),
-        "pf_emp": round(pf_emp, 2),
-        "pt": round(pt_val, 2),
+        "gross_salary": round(gross, 2),
         "total_deductions": round(total_deductions, 2),
-        "pf_employer": round(pf_employer, 2),
         "net": round(net, 2),
+        "net_salary": round(net, 2),
         "currency": "INR",
-        "notes": None,
     }
 
     return payslip, trace, lines

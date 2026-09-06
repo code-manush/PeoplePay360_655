@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
 let authToken = localStorage.getItem('peoplepay_token');
 
@@ -32,6 +32,7 @@ function extractErrorMessage(error: any): string {
     data?.detail?.error?.message ||
     (typeof data?.detail === 'string' ? data.detail : null) ||
     data?.message ||
+    (!error.response ? 'Cannot reach the API. Confirm the backend is running on port 8000, then refresh.' : null) ||
     error.message ||
     'An unexpected error occurred'
   );
@@ -63,6 +64,22 @@ export function unwrapList<T = any>(response: any): T[] {
 
 export function unwrapData<T = any>(response: any): T {
   return (response?.data ?? response) as T;
+}
+
+export async function downloadPayslipPdf(payslipId: string, filename?: string) {
+  const token = authToken || localStorage.getItem('peoplepay_token');
+  const res = await axios.get(`${API_BASE_URL}/payroll/payslips/${payslipId}/pdf`, {
+    responseType: 'blob',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  const url = window.URL.createObjectURL(res.data);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename || `payslip-${payslipId}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
 }
 
 export default apiClient;

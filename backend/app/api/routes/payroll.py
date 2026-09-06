@@ -85,15 +85,16 @@ def get_payrun(payrun_id: str):
     payrun = payroll_repo.find_payrun_by_id(payrun_id)
     if not payrun:
         raise HTTPException(status_code=404, detail=error_response("NOT_FOUND", f"Payrun {payrun_id} not found"))
-    payrun_emps = payroll_repo.find_payrun_employees(payrun_id)
     payslips = payroll_repo.find_payslips({"payrun_id": payrun_id})
     warnings = payroll_repo.find_warnings({"payrun_id": payrun_id})
-    return success_response({
-        **payrun,
-        "employee_count": len(payrun_emps),
-        "payslips": payslips,
-        "warnings": warnings,
-    })
+    history = payroll_repo.find_status_history(payrun_id)
+    
+    # Enrich payslips with employee details
+    for ps in payslips:
+        emp = emp_repo.find_by_id(ps.get("employee_id", ""))
+        ps["employee"] = emp
+
+    return success_response({**payrun, "payslips": payslips, "warnings": warnings, "status_history": history})
 
 
 @router.post("/payruns")
@@ -103,6 +104,51 @@ def create_payrun(body: dict, current: dict = Depends(get_current_user)):
     if body["period_end"] < body["period_start"]:
         raise HTTPException(status_code=422, detail=error_response("VALIDATION_ERROR", "period_end must be after period_start"))
 
+    include = str(body.get("include") or "sample").strip().lower()
+    requested_ids = {str(eid) for eid in (body.get("employee_ids") or []) if eid}
+    structure_id = body.get("salary_structure_id")
+    sample_limit = int(body.get("max_employees") or 5)
+
+    all_contracts = contract_repo.find_all({"status": "ACTIVE"})
+    employees = {str(e["id"]): e for e in emp_repo.find_all({"is_active": True})}
+    attendance_ids = set()
+    if not requested_ids and include != "all":
+        limit = sample_limit if include != "attendance" else None
+        attendance_ids = set(att_repo.employee_ids_in_range(body["period_start"], body["period_end"], limit))
+        if not attendance_ids:
+            raise HTTPException(status_code=422, detail=error_response(
+                "VALIDATION_ERROR",
+                "No attendance exists for this period. Use August 2026 mock data, or choose All active employees.",
+            ))
+
+    rows = []
+    seen = set()
+    for contract in all_contracts:
+        if structure_id and contract.get("salary_structure_id") != structure_id:
+            continue
+        emp_id = str(contract.get("employee_id") or "")
+        if not emp_id or emp_id in seen:
+            continue
+        if requested_ids and emp_id not in requested_ids:
+            continue
+        if not requested_ids and include != "all" and emp_id not in attendance_ids:
+            continue
+        emp = employees.get(emp_id)
+        if not emp or not emp.get("is_active"):
+            continue
+        seen.add(emp_id)
+        rows.append({
+            "employee_id": emp_id,
+            "contract_id": contract["id"],
+            "calculation_status": "PENDING",
+        })
+
+    if not rows:
+        raise HTTPException(status_code=422, detail=error_response(
+            "VALIDATION_ERROR",
+            "No matching active contracts for this period. Keep August 2026, or choose All active employees.",
+        ))
+
     run_number = f"PR-{date_type.today().year}-{datetime.now(timezone.utc).strftime('%m%d%H%M')}"
     payrun = payroll_repo.create_payrun({
         "run_number": run_number,
@@ -110,64 +156,32 @@ def create_payrun(body: dict, current: dict = Depends(get_current_user)):
         "period_end": body["period_end"],
         "payment_date": body.get("payment_date") or body.get("period_end"),
         "status": "DRAFT",
-        "created_by": current.get("employee_id") or current.get("user_id"),
+        "created_by": current.get("user_id"),
         "employee_count": 0,
-        "total_gross": None,
-        "total_deductions": None,
-        "total_net": None,
+        "total_gross": 0,
+        "total_deductions": 0,
+        "total_net": 0,
     })
-
-    all_contracts = contract_repo.find_all({"status": "ACTIVE"})
-    structure_id = body.get("salary_structure_id")
-    added = 0
-    seen = set()
-    for contract in all_contracts:
-        if structure_id and contract.get("salary_structure_id") != structure_id:
-            continue
-        emp_id = contract.get("employee_id")
-        if emp_id in seen:
-            continue
-        emp = emp_repo.find_by_id(emp_id)
-        if emp and emp.get("is_active"):
-            payroll_repo.add_payrun_employee({
-                "payrun_id": payrun["id"],
-                "employee_id": emp_id,
-                "contract_id": contract["id"],
-                "calculation_status": "PENDING",
-            })
-            seen.add(emp_id)
-            added += 1
-
-    if body.get("employee_ids"):
-        for emp_id in body["employee_ids"]:
-            if emp_id in seen:
-                continue
-            emp = emp_repo.find_by_id(emp_id)
-            contracts = contract_repo.find_all({"employee_id": emp_id, "status": "ACTIVE"})
-            if emp and contracts:
-                payroll_repo.add_payrun_employee({
-                    "payrun_id": payrun["id"],
-                    "employee_id": emp_id,
-                    "contract_id": contracts[0]["id"],
-                    "calculation_status": "PENDING",
-                })
-                seen.add(emp_id)
-                added += 1
-
+    for row in rows:
+        row["payrun_id"] = payrun["id"]
+    added = payroll_repo.add_payrun_employees_bulk(rows)
     payroll_repo.update_payrun(payrun["id"], {"employee_count": added})
-    audit_service.log("PAYRUN_CREATED", "PAYRUN", payrun["id"],
+    payroll_repo.add_status_history(payrun["id"], None, "DRAFT", current.get("user_id"), "Payrun created")
+    audit_service.log_for(current, "PAYRUN_CREATED", "PAYRUN", payrun["id"],
                       description=f"Payrun {run_number} created")
     return success_response({**payrun, "employee_count": added, "total_employees": added}, "Payrun created")
 
 
 @router.post("/payruns/{payrun_id}/compute")
-def compute_payrun(payrun_id: str):
+def compute_payrun(payrun_id: str, current: dict = Depends(get_current_user)):
     payrun = payroll_repo.find_payrun_by_id(payrun_id)
     if not payrun:
         raise HTTPException(status_code=404, detail=error_response("NOT_FOUND", f"Payrun {payrun_id} not found"))
     if payrun["status"] not in ("DRAFT", "COMPUTED"):
         raise HTTPException(status_code=409, detail=error_response(
-            "INVALID_STATE", f"Cannot compute payrun in status '{payrun['status']}'. Must be DRAFT or COMPUTED."))
+            "INVALID_STATE",
+            f"Cannot compute payrun in status '{payrun['status']}'. Create a new draft for August 2026 instead of recomputing TEST-e89ab1eb.",
+        ))
 
     engine = _get_engine()
     try:
@@ -180,29 +194,31 @@ def compute_payrun(payrun_id: str):
     now = datetime.now(timezone.utc).isoformat()
     updated = payroll_repo.update_payrun(payrun_id, {
         "status": "COMPUTED",
-        "computed_at": now,
-        "total_employees": len(result["payslips"]),
+        "started_at": now,
+        "employee_count": len(result["payslips"]),
         "total_gross": result["total_gross"],
         "total_deductions": result["total_deductions"],
         "total_net": result["total_net"],
     })
-    audit_service.log("PAYRUN_COMPUTED", "PAYRUN", payrun_id,
+    payroll_repo.add_status_history(payrun_id, payrun["status"], "COMPUTED", reason="Payrun computed")
+    audit_service.log_for(current, "PAYRUN_COMPUTED", "PAYRUN", payrun_id,
                       description=f"Payrun computed. Net: ₹{result['total_net']:,.2f}",
                       metadata={"total_net": result["total_net"], "warnings": len(result["warnings"])})
     return success_response({**updated, "warnings": result["warnings"]}, "Payrun computed successfully")
 
 
 @router.post("/payruns/{payrun_id}/validate")
-def validate_payrun(payrun_id: str):
+def validate_payrun(payrun_id: str, current: dict = Depends(get_current_user)):
     payrun = payroll_repo.find_payrun_by_id(payrun_id)
     if not payrun:
         raise HTTPException(status_code=404, detail=error_response("NOT_FOUND", f"Payrun {payrun_id} not found"))
     if payrun["status"] != "COMPUTED":
         raise HTTPException(status_code=409, detail=error_response(
             "INVALID_STATE", f"Cannot validate payrun in status '{payrun['status']}'. Must be COMPUTED first."))
-    now = datetime.now(timezone.utc).isoformat()
-    updated = payroll_repo.update_payrun(payrun_id, {"status": "VALIDATED", "validated_at": now})
-    audit_service.log("PAYRUN_VALIDATED", "PAYRUN", payrun_id, description="Payrun validated")
+    updated = payroll_repo.update_payrun(payrun_id, {"status": "VALIDATED"})
+    payroll_repo.mark_payslips_status(payrun_id, "VALIDATED")
+    payroll_repo.add_status_history(payrun_id, payrun["status"], "VALIDATED", reason="Payrun validated")
+    audit_service.log_for(current, "PAYRUN_VALIDATED", "PAYRUN", payrun_id, description="Payrun validated")
     return success_response(updated, "Payrun validated")
 
 
@@ -217,8 +233,14 @@ def pay_payrun(payrun_id: str, current: dict = Depends(get_current_user)):
         raise HTTPException(status_code=409, detail=error_response(
             "INVALID_STATE", f"Cannot pay payrun in status '{payrun['status']}'. Validate it first."))
 
+    payslips = payroll_repo.find_payslips({"payrun_id": payrun_id})
     payslips_count = payroll_repo.mark_payslips_paid(payrun_id)
     now = datetime.now(timezone.utc).isoformat()
+    payment_date = payrun.get("payment_date") or date_type.today().isoformat()
+    for ps in payslips:
+        payroll_repo.create_payment_for_payslip(ps, payment_date)
+        emp = emp_repo.find_by_id(ps.get("employee_id", ""))
+        payroll_repo.mark_payslip_delivered(ps, emp)
 
     notif_repo.create({
         "title": f"Salary credited - {payrun.get('run_number')}",
@@ -232,19 +254,23 @@ def pay_payrun(payrun_id: str, current: dict = Depends(get_current_user)):
         "created_by": current.get("user_id"),
     })
 
-    updated = payroll_repo.update_payrun(payrun_id, {"status": "PAID"})
-    audit_service.log("PAYRUN_PAID", "PAYRUN", payrun_id, description=f"Payrun paid. {payslips_count} payslips")
+    now = datetime.now(timezone.utc).isoformat()
+    updated = payroll_repo.update_payrun(payrun_id, {"status": "PAID", "completed_at": now, "payment_date": payment_date})
+    payroll_repo.add_status_history(payrun_id, payrun["status"], "PAID", current.get("user_id"), "Payrun paid")
+    audit_service.log_for(current, "PAYRUN_PAID", "PAYRUN", payrun_id, description=f"Payrun paid. {payslips_count} payslips")
     return success_response({**updated, "success_count": payslips_count, "failed_count": 0}, "Payrun paid")
 
 
 @router.post("/payruns/{payrun_id}/cancel")
-def cancel_payrun(payrun_id: str):
+def cancel_payrun(payrun_id: str, current: dict = Depends(get_current_user)):
     payrun = payroll_repo.find_payrun_by_id(payrun_id)
     if not payrun:
         raise HTTPException(status_code=404, detail=error_response("NOT_FOUND", f"Payrun {payrun_id} not found"))
     if payrun["status"] == "PAID":
         raise HTTPException(status_code=409, detail=error_response("INVALID_STATE", "Cannot cancel a paid payrun"))
     updated = payroll_repo.update_payrun(payrun_id, {"status": "CANCELLED"})
+    payroll_repo.add_status_history(payrun_id, payrun["status"], "CANCELLED", current.get("user_id"), "Payrun cancelled")
+    audit_service.log_for(current, "PAYRUN_CANCELLED", "PAYRUN", payrun_id, description=f"Payrun {payrun.get('run_number')} cancelled")
     return success_response(updated, "Payrun cancelled")
 
 
@@ -288,8 +314,32 @@ def get_payslip(payslip_id: str):
     lines = payroll_repo.find_payslip_lines(payslip_id)
     payments = payroll_repo.find_payments({"payslip_id": payslip_id})
     emp = emp_repo.find_by_id(ps.get("employee_id", ""))
-    return success_response({**ps, "lines": lines, "payments": payments, "employee": emp})
+    worked_days = payroll_repo.find_worked_days(payslip_id)
+    inputs = payroll_repo.find_payslip_inputs(payslip_id)
+    return success_response({
+        **ps,
+        "lines": lines,
+        "payments": payments,
+        "employee": emp,
+        "worked_days": worked_days,
+        "inputs": inputs,
+    })
 
+@router.get("/payslips/{payslip_id}/trace")
+def get_payslip_trace(payslip_id: str):
+    ps = payroll_repo.find_payslip_by_id(payslip_id)
+    if not ps:
+        raise HTTPException(status_code=404, detail=error_response("NOT_FOUND", f"Payslip {payslip_id} not found"))
+    traces = payroll_repo.find_payslip_traces_by_payslip(payslip_id)
+    return success_response(traces)
+
+@router.get("/payslips/{payslip_id}/snapshot")
+def get_payslip_snapshot(payslip_id: str):
+    ps = payroll_repo.find_payslip_by_id(payslip_id)
+    if not ps:
+        raise HTTPException(status_code=404, detail=error_response("NOT_FOUND", f"Payslip {payslip_id} not found"))
+    snapshot = payroll_repo.find_payslip_snapshot_by_payslip_id(payslip_id)
+    return success_response(snapshot)
 
 @router.get("/payslips/{payslip_id}/pdf")
 def download_payslip_pdf(payslip_id: str):

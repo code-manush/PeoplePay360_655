@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, Float, Text, Integer, Date, DateTime, Numeric, FetchedValue
+from sqlalchemy import Column, String, Boolean, Float, Text, Integer, Date, DateTime, Time, Numeric, FetchedValue
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from app.core.database import Base
 
@@ -142,8 +142,49 @@ class Schedule(Base):
     id = Column(UUID(as_uuid=False), primary_key=True)
     name = Column(String, nullable=False)
     description = Column(Text, nullable=True)
+    monday_start = Column(Time, nullable=True)
+    monday_end = Column(Time, nullable=True)
+    tuesday_start = Column(Time, nullable=True)
+    tuesday_end = Column(Time, nullable=True)
+    wednesday_start = Column(Time, nullable=True)
+    wednesday_end = Column(Time, nullable=True)
+    thursday_start = Column(Time, nullable=True)
+    thursday_end = Column(Time, nullable=True)
+    friday_start = Column(Time, nullable=True)
+    friday_end = Column(Time, nullable=True)
+    saturday_start = Column(Time, nullable=True)
+    saturday_end = Column(Time, nullable=True)
+    sunday_start = Column(Time, nullable=True)
+    sunday_end = Column(Time, nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=True)
     updated_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class EmployeeSchedule(Base):
+    __tablename__ = "employee_schedules"
+    __table_args__ = {"schema": "attendance"}
+    id = Column(UUID(as_uuid=False), primary_key=True)
+    employee_id = Column(UUID(as_uuid=False), nullable=False)
+    schedule_id = Column(UUID(as_uuid=False), nullable=False)
+    effective_from = Column(Date, nullable=False)
+    effective_to = Column(Date, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class EmploymentHistory(Base):
+    __tablename__ = "employment_history"
+    __table_args__ = {"schema": "hr"}
+    id = Column(UUID(as_uuid=False), primary_key=True)
+    employee_id = Column(UUID(as_uuid=False), nullable=False)
+    department_id = Column(UUID(as_uuid=False), nullable=True)
+    job_position_id = Column(UUID(as_uuid=False), nullable=True)
+    manager_id = Column(UUID(as_uuid=False), nullable=True)
+    employment_type = Column(String, nullable=True)
+    effective_from = Column(Date, nullable=False)
+    effective_to = Column(Date, nullable=True)
+    reason = Column(String, nullable=True)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=True)
 
 
 class LeaveType(Base):
@@ -258,8 +299,22 @@ class Payrun(Base):
     total_deductions = Column(Numeric(14, 2), nullable=True)
     total_net = Column(Numeric(14, 2), nullable=True)
     created_by = Column(UUID(as_uuid=False), nullable=True)
+    started_at = Column(DateTime(timezone=True), nullable=True)
+    completed_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=True)
     updated_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class PayrunStatusHistory(Base):
+    __tablename__ = "payrun_status_history"
+    __table_args__ = {"schema": "payroll"}
+    id = Column(UUID(as_uuid=False), primary_key=True)
+    payrun_id = Column(UUID(as_uuid=False), nullable=False)
+    old_status = Column(String, nullable=True)
+    new_status = Column(String, nullable=False)
+    changed_by = Column(UUID(as_uuid=False), nullable=True)
+    reason = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=True)
 
 
 class PayrunEmployee(Base):
@@ -288,8 +343,10 @@ class Payslip(Base):
     total_deductions = Column(Numeric(14, 2), nullable=True)
     net_salary = Column(Numeric(14, 2), nullable=True)
     status = Column(String, nullable=False)
+    pdf_path = Column(Text, nullable=True)
     generated_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=True)
+    updated_at = Column(DateTime(timezone=True), nullable=True)
 
 
 class PayslipLine(Base):
@@ -305,7 +362,83 @@ class PayslipLine(Base):
     base_amount = Column(Numeric(14, 2), nullable=True)
     rate = Column(Numeric(8, 4), nullable=True)
     amount = Column(Numeric(14, 2), nullable=True)
+    calculation_expression = Column(Text, nullable=True)
     explanation = Column(Text, nullable=True)
+
+
+class PayslipCalculationTrace(Base):
+    __tablename__ = "payslip_calculation_trace"
+    __table_args__ = {"schema": "payroll"}
+    id = Column(UUID(as_uuid=False), primary_key=True)
+    payslip_id = Column(UUID(as_uuid=False), nullable=False)
+    step_number = Column(Integer, nullable=False)
+    rule_id = Column(UUID(as_uuid=False), nullable=True)
+    rule_code = Column(String, nullable=False)
+    rule_name = Column(String, nullable=True)
+    input_snapshot = Column(JSONB, nullable=True)
+    base_code = Column(String, nullable=True)
+    base_value = Column(Numeric(18, 4), nullable=True)
+    rate = Column(Numeric(10, 4), nullable=True)
+    expression = Column(Text, nullable=True)
+    result = Column(Numeric(18, 2), nullable=False)
+    explanation = Column(Text, nullable=True)
+    calculated_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class PayslipDelivery(Base):
+    __tablename__ = "payslip_deliveries"
+    __table_args__ = {"schema": "payroll"}
+    id = Column(UUID(as_uuid=False), primary_key=True)
+    payslip_id = Column(UUID(as_uuid=False), nullable=False)
+    delivery_method = Column(String, nullable=False)
+    recipient = Column(String, nullable=True)
+    status = Column(String, nullable=True)
+    sent_at = Column(DateTime(timezone=True), nullable=True)
+    error_message = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class PayslipInput(Base):
+    __tablename__ = "payslip_inputs"
+    __table_args__ = {"schema": "payroll"}
+    id = Column(UUID(as_uuid=False), primary_key=True)
+    payslip_id = Column(UUID(as_uuid=False), nullable=False)
+    input_code = Column(String, nullable=False)
+    input_name = Column(String, nullable=False)
+    input_type = Column(String, nullable=False)
+    numeric_value = Column(Numeric(18, 4), nullable=True)
+    text_value = Column(Text, nullable=True)
+    boolean_value = Column(Boolean, nullable=True)
+    date_value = Column(Date, nullable=True)
+    source = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class PayslipSnapshot(Base):
+    __tablename__ = "payslip_snapshots"
+    __table_args__ = {"schema": "payroll"}
+    id = Column(UUID(as_uuid=False), primary_key=True)
+    payslip_id = Column(UUID(as_uuid=False), nullable=False)
+    employee_snapshot = Column(JSONB, nullable=False)
+    contract_snapshot = Column(JSONB, nullable=False)
+    attendance_snapshot = Column(JSONB, nullable=True)
+    leave_snapshot = Column(JSONB, nullable=True)
+    salary_structure_snapshot = Column(JSONB, nullable=True)
+    salary_rules_snapshot = Column(JSONB, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class PayslipWorkedDays(Base):
+    __tablename__ = "payslip_worked_days"
+    __table_args__ = {"schema": "payroll"}
+    id = Column(UUID(as_uuid=False), primary_key=True)
+    payslip_id = Column(UUID(as_uuid=False), nullable=False)
+    category = Column(String, nullable=False)
+    number_of_days = Column(Numeric(8, 2), nullable=True)
+    number_of_hours = Column(Numeric(10, 2), nullable=True)
+    source = Column(String, nullable=True)
+    description = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=True)
 
 
 class PayrollWarning(Base):
@@ -335,6 +468,8 @@ class Payment(Base):
     payment_method = Column(String, nullable=True)
     status = Column(String, nullable=True)
     failure_reason = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=True)
+    updated_at = Column(DateTime(timezone=True), nullable=True)
 
 
 class AuditLog(Base):
@@ -348,4 +483,6 @@ class AuditLog(Base):
     entity_id = Column(UUID(as_uuid=False), nullable=True)
     old_values = Column(JSONB, nullable=True)
     new_values = Column(JSONB, nullable=True)
+    ip_address = Column(String, nullable=True)
+    user_agent = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=True)

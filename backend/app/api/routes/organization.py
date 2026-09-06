@@ -28,7 +28,10 @@ def get_department(dept_id: str):
 def create_department(body: dict):
     if not body.get("name"):
         raise HTTPException(status_code=422, detail=error_response("VALIDATION_ERROR", "Name is required", "name"))
-    dept = dept_repo.create({**body, "is_active": True})
+    payload = {**body, "is_active": True}
+    if not payload.get("code"):
+        payload["code"] = str(body.get("name") or "DEPT").upper().replace(" ", "_")[:30]
+    dept = dept_repo.create(payload)
     return success_response(dept, "Department created")
 
 
@@ -65,9 +68,9 @@ def get_position(pos_id: str):
 
 @pos_router.post("")
 def create_position(body: dict):
-    if not body.get("title"):
+    if not body.get("title") and not body.get("name"):
         raise HTTPException(status_code=422, detail=error_response("VALIDATION_ERROR", "Title is required", "title"))
-    pos = pos_repo.create({**body, "is_active": True})
+    pos = pos_repo.create({**body, "name": body.get("name") or body.get("title"), "is_active": True})
     return success_response(pos, "Position created")
 
 

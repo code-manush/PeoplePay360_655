@@ -223,8 +223,9 @@ def approve_leave_request(request_id: str, body: dict = {}, current: dict = Depe
             "created_by": current.get("employee_id"),
         })
 
-    audit_service.log("LEAVE_APPROVED", "LEAVE_REQUEST", request_id,
-                      description=f"Leave approved for employee {r.get('employee_id')}")
+    emp_name = f"{emp.get('first_name')} {emp.get('last_name')}".strip() if emp else r.get("employee_id")
+    audit_service.log_for(current, "LEAVE_APPROVED", "LEAVE_REQUEST", request_id,
+                      description=f"Leave approved for {emp_name}")
     return success_response(updated, "Leave request approved")
 
 
@@ -260,8 +261,9 @@ def reject_leave_request(request_id: str, body: dict = {}, current: dict = Depen
             "created_by": current.get("employee_id"),
         })
 
-    audit_service.log("LEAVE_REJECTED", "LEAVE_REQUEST", request_id,
-                      description=f"Leave rejected. Reason: {body.get('reason', '')}")
+    emp_name = f"{emp.get('first_name')} {emp.get('last_name')}".strip() if emp else r.get("employee_id")
+    audit_service.log_for(current, "LEAVE_REJECTED", "LEAVE_REQUEST", request_id,
+                      description=f"Leave rejected for {emp_name}. Reason: {body.get('reason') or body.get('rejection_reason') or 'Rejected by HR'}")
     return success_response(updated, "Leave request rejected")
 
 

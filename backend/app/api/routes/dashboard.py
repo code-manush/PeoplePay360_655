@@ -54,7 +54,7 @@ def get_dashboard(current: dict = Depends(get_current_user)):
                    61 <= (date_type.fromisoformat(c["end_date"]) - today_dt).days <= 90]
 
     all_warnings = payroll_repo.find_warnings({"is_resolved": False})
-    critical_warnings = [w for w in all_warnings if w.get("severity") in ("ERROR", "BLOCKER")]
+    critical_warnings = [w for w in all_warnings if w.get("severity") in ("ERROR", "CRITICAL", "BLOCKER")]
 
     from datetime import datetime
     thirty_days_ago = (today_dt - timedelta(days=30)).isoformat()

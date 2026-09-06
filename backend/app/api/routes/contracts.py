@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import datetime, timezone, date as date_type, timedelta
 from app.repositories.postgres_repos import (
     PostgresContractRepository, PostgresEmployeeRepository,
-    PostgresNotificationRepository
+    PostgresNotificationRepository, PostgresScheduleRepository
 )
 from app.core.response import success_response, error_response, paginated_response
 from app.core.config import settings
@@ -14,6 +14,7 @@ router = APIRouter(prefix="/contracts", tags=["contracts"])
 contract_repo = PostgresContractRepository()
 emp_repo = PostgresEmployeeRepository()
 notif_repo = PostgresNotificationRepository()
+schedule_repo = PostgresScheduleRepository()
 
 
 def _employee_map():
@@ -115,10 +116,13 @@ def create_contract(body: dict, current: dict = Depends(require_min_role("HR")))
         "contract_number": body.get("contract_number") or f"CON{int(datetime.now(timezone.utc).timestamp())}",
         "contract_type": body.get("contract_type") or body.get("employment_type") or "FULL_TIME",
         "basic_salary": body.get("basic_salary") or body.get("wage") or body.get("base_salary") or 0,
+        "salary_structure_id": body.get("salary_structure_id"),
         "working_hours_per_week": body.get("working_hours_per_week") or 40,
         "status": body.get("status", "ACTIVE"),
     })
-    audit_service.log("CONTRACT_CREATED", "CONTRACT", contract["id"],
+    if body.get("schedule_id"):
+        schedule_repo.assign_employee(body["employee_id"], body["schedule_id"], contract.get("start_date"))
+    audit_service.log_for(current, "CONTRACT_CREATED", "CONTRACT", contract["id"],
                       description=f"Contract {contract.get('contract_number')} created")
     return success_response(contract, "Contract created")
 
@@ -129,11 +133,13 @@ def update_contract(contract_id: str, body: dict):
     if not existing:
         raise HTTPException(status_code=404, detail=error_response("NOT_FOUND", f"Contract {contract_id} not found"))
     updated = contract_repo.update(contract_id, body)
+    if body.get("schedule_id") and updated:
+        schedule_repo.assign_employee(updated["employee_id"], body["schedule_id"], updated.get("start_date"))
     return success_response(updated)
 
 
 @router.patch("/{contract_id}/renew")
-def renew_contract(contract_id: str, body: dict):
+def renew_contract(contract_id: str, body: dict, current: dict = Depends(require_min_role("HR"))):
     old = contract_repo.find_by_id(contract_id)
     if not old:
         raise HTTPException(status_code=404, detail=error_response("NOT_FOUND", f"Contract {contract_id} not found"))
@@ -168,8 +174,8 @@ def renew_contract(contract_id: str, body: dict):
             "created_by": None,
         })
 
-    audit_service.log("CONTRACT_RENEWED", "CONTRACT", new_contract["id"],
-                      description=f"Contract renewed. Previous: {contract_id}")
+    audit_service.log_for(current, "CONTRACT_RENEWED", "CONTRACT", new_contract["id"],
+                      description=f"Contract renewed. Previous: {old.get('contract_number') or contract_id}")
     return success_response(new_contract, "Contract renewed successfully")
 
 
