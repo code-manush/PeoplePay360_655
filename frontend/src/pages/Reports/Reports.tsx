@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card/Card';
 import { Badge } from '../../components/ui/Badge/Badge';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import apiClient, { unwrapData, unwrapList } from '../../api/client';
 import styles from '../Dashboard.module.css';
+
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
 
 export default function Reports() {
   const [data, setData] = useState<any>(null);
@@ -71,6 +74,39 @@ export default function Reports() {
         <Card>
           <CardHeader><CardTitle>Salary by department</CardTitle></CardHeader>
           <CardContent>
+            {data.salaryByDepartment && data.salaryByDepartment.length > 0 ? (
+              <div style={{ height: 300, width: '100%', marginBottom: '1.5rem', marginTop: '1rem' }}>
+                <ResponsiveContainer>
+                  <BarChart data={data.salaryByDepartment} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                    <XAxis 
+                      dataKey="department_name" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} 
+                      dy={10} 
+                    />
+                    <YAxis 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
+                      tickFormatter={(value) => `₹${value / 1000}k`}
+                    />
+                    <Tooltip 
+                      cursor={{ fill: 'var(--bg-secondary)', opacity: 0.4 }}
+                      contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)' }}
+                      formatter={(value: any) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value || 0)}
+                      labelStyle={{ color: 'var(--text-primary)', fontWeight: 'bold', marginBottom: '0.5rem' }}
+                    />
+                    <Bar dataKey="total_salary" radius={[4, 4, 0, 0]}>
+                      {data.salaryByDepartment.map((_: any, index: number) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : null}
             <div className={styles.list}>
               {(data.salaryByDepartment || []).map((row: any) => (
                 <div key={row.department_id} className={styles.listItem}>
